@@ -7,8 +7,8 @@ import warnings
 warnings.filterwarnings("ignore")
 
 # %% auto 0
-__all__ = ['DEFAULTS', 'PILLoadTruncated', 'copy_root_dir', 'umap_args_to_list', 'test_iiif', 'test_butterfly_duplicate',
-           'test_butterfly', 'test_butterfly_missing_meta', 'test_no_meta_dir', 'project_images', 'embed_images']
+__all__ = ['DEFAULTS', 'PILLoadTruncated', 'copy_root_dir', 'umap_args_to_list', 'test_butterfly_duplicate', 'test_butterfly',
+           'test_butterfly_missing_meta', 'test_no_meta_dir', 'project_images', 'embed_images']
 
 # %% ../../nbs/00_bedmap.ipynb 4
 # print separately that we're loading dependencies, as this can take a while
@@ -63,7 +63,6 @@ DEFAULTS = {
     "umap_on_full_dims": False,
     "n_components": 2,
     "metric": "correlation",
-    "pointgrid_fill": 0.05,
     "gzip": False,
     "min_size": 100,
     "min_score": 0.3,
@@ -132,20 +131,6 @@ def umap_args_to_list(**kwargs):
 
 # %% ../../nbs/00_bedmap.ipynb 16
 copy_root_dir = get_bedmap_root()
-
-
-def test_iiif(config):
-    test_images = copy_root_dir / "tests/IIIF_examples/iif_example.txt"
-    test_out_dir = copy_root_dir / "tests/smithsonian_butterflies_10/output_test_temp"
-
-    if Path(test_out_dir).exists():
-        rmtree(test_out_dir)
-
-    config["images"] = test_images.as_posix()
-    config["out_dir"] = test_out_dir.as_posix()
-    config["plot_id"] = "test_diff"
-
-    return config
 
 
 def test_butterfly_duplicate(config):
@@ -245,9 +230,6 @@ def project_images(
     ) = DEFAULTS["umap_on_full_dims"],
     n_components: Param(type=int, help="the n_components argument for UMAP") = DEFAULTS["n_components"],
     metric: Param(type=str, help="the metric argument for umap") = DEFAULTS["metric"],
-    pointgrid_fill: Param(
-        type=float, help="float 0:1 that determines sparsity of jittered distributions (lower means more sparse)"
-    ) = DEFAULTS["pointgrid_fill"],
     copy_web_only: Param(type=store_true, help="update ./output/assets without reprocessing data") = False,
     min_size: Param(type=float, help="min size of cropped images") = DEFAULTS["min_size"],
     gzip: Param(type=store_true, help="save outputs with gzip compression") = False,

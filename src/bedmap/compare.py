@@ -36,8 +36,6 @@ COMPARE_FILES = [
     "data/hotspots/hotspot-test_diff.json",
     "data/imagelists/imagelist-test_diff.json",
     # Layouts
-    "data/layouts/umap-jittered-test_diff.json",
-    "data/layouts/grid-test_diff.json",
     "data/layouts/rasterfairy-test_diff.json",
     "data/layouts/categorical-labels-test_diff.json",
     "data/layouts/categorical-test_diff.json",
