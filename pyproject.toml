@@ -30,6 +30,7 @@ packages = ["src"]
 
 [tool.uv]
 dev-dependencies = [
+    "bedmap",
     "coverage>=7.6.1",
     "deptry>=0.20.0",
     "ipykernel>=6.29.5",
@@ -42,6 +43,9 @@ dev-dependencies = [
     "setuptools>=75.2.0",
     # Needed by `nbdev`, but undeclared
 ]
+
+[tool.uv.sources]
+bedmap = { workspace = true }
 
 [tool.ruff]
 line-length = 120

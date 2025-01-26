@@ -83,6 +83,7 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "bedmap" },
     { name = "coverage" },
     { name = "deptry" },
     { name = "ipykernel" },
@@ -110,6 +111,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "bedmap", editable = "." },
     { name = "coverage", specifier = ">=7.6.1" },
     { name = "deptry", specifier = ">=0.20.0" },
     { name = "ipykernel", specifier = ">=6.29.5" },
