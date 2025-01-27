@@ -24,6 +24,10 @@ repository = "https://github.com/fr1ll/bedmap-dev"
 documentation = "https://github.com/fr1ll/bedmap-dev"
 homepage = "https://github.com/fr1ll/bedmap-dev"
 
+[project.scripts]
+bedmap_from_images = "bedmap.bedmap:project_images"
+bedmap_embed_only = "bedmap.bedmap:embed_images"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
