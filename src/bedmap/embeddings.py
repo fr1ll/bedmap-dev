@@ -56,7 +56,8 @@ def timm_transform_embed(img, model, transform, device, dtype) -> np.ndarray:
     """
     img = transform(img).to(device, dtype).unsqueeze(0)
     emb = model(img)
-    return emb.detach().cpu().numpy().squeeze()
+
+    return emb.detach().cpu().float().numpy().squeeze()
 
 # %% ../../nbs/04_embeddings.ipynb 8
 def get_timm_embeds(imageEngine, model_name: str, data_dir: Path, **kwargs):
