@@ -7,18 +7,8 @@ import warnings
 warnings.filterwarnings("ignore")
 
 # %% auto 0
-__all__ = [
-    "DEFAULTS",
-    "PILLoadTruncated",
-    "copy_root_dir",
-    "umap_args_to_list",
-    "test_butterfly_duplicate",
-    "test_butterfly",
-    "test_butterfly_missing_meta",
-    "test_no_meta_dir",
-    "project_images",
-    "embed_images",
-]
+__all__ = ['app', 'DEFAULTS', 'PILLoadTruncated', 'copy_root_dir', 'umap_args_to_list', 'test_butterfly_duplicate',
+           'test_butterfly', 'test_butterfly_missing_meta', 'test_no_meta_dir', 'project_images', 'embed_images']
 
 # %% ../../nbs/00_bedmap.ipynb 4
 # print separately that we're loading dependencies, as this can take a while
@@ -38,6 +28,10 @@ from .metadata import get_manifest, write_metadata
 from .images import create_atlases_and_thumbs, ImageFactory
 
 # %% ../../nbs/00_bedmap.ipynb 6
+import arguably
+import typer
+app = typer.Typer()
+
 from shutil import rmtree
 from pathlib import Path
 from typing import Optional, List, Union, Tuple
@@ -67,7 +61,7 @@ DEFAULTS = {
     "atlas_size": 2048,
     "cell_size": 32,
     "lod_cell_height": 128,  # Why is not in parser?
-    "embed_model": "tf_inception_v3",
+    "embed_model": "vit_small_patch14_reg4_dinov2.lvd142m",
     "n_neighbors": [15],
     "min_dist": [0.01],
     "umap_on_full_dims": False,
@@ -90,7 +84,6 @@ PILLoadTruncated = True
 NB: Keras Image class objects return image.size as w,h
     Numpy array representations of images return image.shape as h,w,c
 """
-
 
 # %% ../../nbs/00_bedmap.ipynb 13
 def _project_images(imageEngine, embeds: Optional[np.ndarray] = None, **kwargs):
@@ -123,7 +116,6 @@ def _project_images(imageEngine, embeds: Optional[np.ndarray] = None, **kwargs):
     # write_images(imageEngine)
     print(timestamp(), "Done!")
 
-
 # %% ../../nbs/00_bedmap.ipynb 14
 def umap_args_to_list(**kwargs):
     """Convert n_neighbors and min_dist arguments into lists
@@ -140,7 +132,6 @@ def umap_args_to_list(**kwargs):
         if not isinstance(kwargs[i], list):
             kwargs[i] = [kwargs[i]]
     return kwargs
-
 
 # %% ../../nbs/00_bedmap.ipynb 16
 copy_root_dir = get_bedmap_root()
@@ -205,60 +196,39 @@ def test_no_meta_dir(config):
 
     return config
 
-
 # %% ../../nbs/00_bedmap.ipynb 18
-@call_parse
+@app.command()
 def project_images(
-    images: Param(type=str, help="path or glob of images to process") = DEFAULTS["images"],
-    tables: Param(
-        type=str, help="path or glob of tables with image_path and embed_path columns (and optionally metadata)"
-    ) = None,
-    metadata: Param(
-        type=str, help="path to a csv or glob of JSON files with image metadata (see readme for format)"
-    ) = DEFAULTS["meta_dir"],
-    tagline: Param(type=str, help="tagline for image web page") = "Images arranged by visual similarity",
-    logo: Param(type=str, help="path to a small, squarish logo -- SVG is best") = None,
-    max_images: Param(type=int, help="maximum number of images to process") = DEFAULTS["max_images"],
-    use_cache: Param(
-        type=store_true, help="given inputs identical to prior inputs, load outputs from cache"
-    ) = DEFAULTS["use_cache"],
-    encoding: Param(type=str, help="the encoding of input metadata") = DEFAULTS["encoding"],
-    cluster_preproc_dims: Param(
-        type=int, help="number of dims to reduce to prior to clustering. -1 means don't reduce", required=False
-    ) = DEFAULTS["cluster_preproc_dims"],
-    min_cluster_size: Param(type=int, help="the minimum number of images in a cluster", required=False) = DEFAULTS[
-        "min_cluster_size"
-    ],
-    max_clusters: Param(type=int, help="the maximum number of clusters to return", required=False) = DEFAULTS[
-        "max_clusters"
-    ],
-    out_dir: Param(type=str, help="the directory to which outputs will be saved", required=False) = DEFAULTS["out_dir"],
-    cell_size: Param(type=int, help="the size of atlas cells in px", required=False) = DEFAULTS["cell_size"],
-    embed_model: Param(
-        type=str, help="pre-trained model from timm library to use to create embedding", required=False
-    ) = DEFAULTS["embed_model"],
-    n_neighbors: Param(type=int, nargs="+", help="the n_neighbors arguments for UMAP") = DEFAULTS["n_neighbors"],
-    min_dist: Param(type=float, nargs="+", help="the min_dist arguments for UMAP") = DEFAULTS["min_dist"],
-    umap_on_full_dims: Param(
-        type=store_true, help="skip PCA (faster dimensionality reduction) prior to UMAP"
-    ) = DEFAULTS["umap_on_full_dims"],
-    n_components: Param(type=int, help="the n_components argument for UMAP") = DEFAULTS["n_components"],
-    metric: Param(type=str, help="the metric argument for umap") = DEFAULTS["metric"],
-    copy_web_only: Param(type=store_true, help="update ./output/assets without reprocessing data") = False,
-    min_size: Param(type=float, help="min size of cropped images") = DEFAULTS["min_size"],
-    gzip: Param(type=store_true, help="save outputs with gzip compression") = False,
-    shuffle: Param(type=store_true, help="shuffle the input images before data processing begins") = False,
-    plot_id: Param(type=str, help="unique id for a plot; useful for resuming processing on a started plot") = DEFAULTS[
-        "plot_id"
-    ],
-    seed: Param(type=int, help="seed for random processes") = DEFAULTS["seed"],
-    n_clusters: Param(type=int, help="number of clusters if using kmeans") = DEFAULTS["n_clusters"],
-    geojson: Param(type=str, help="path to a GeoJSON file with shapes to be rendered on a map") = DEFAULTS["geojson"],
+    images: Optional[str] = None,
+    tables: Optional[str] = None,
+    metadata: Optional[str] = None,
+    tagline: str = "Images arranged by visual similarity",
+    logo: Optional[str] = None,
+    use_cache: bool = True,
+    encoding: str = "utf8",
+    cluster_preproc_dims: int = -1,
+    min_cluster_size: int = 20,
+    max_clusters: int = 10,
+    out_dir: str = "output",
+    cell_size: int = 32,
+    embed_model: str = "vit_small_patch14_reg4_dinov2.lvd142m",
+    n_neighbors: list[int] = [15],
+    min_dist: list[float] = [0.01],
+    metric: str = "correlation",
+    copy_web_only: bool = False,
+    min_size: float = 100,
+    shuffle: bool = False,
+    seed: int = 24,
+    n_clusters: int = 12,
+    geojson: Optional[str] = None
 ):
-    "Convert a folder of images into a bedmap visualization"
+    '''Convert a folder of images into a bedmap visualization'''
 
     # grab local variables as configuration dict
+
+    print(f"Locals:\n{locals()}\n")
     config = dict(locals())
+    print(f"Config:\n{config}\n")
 
     # some parameters exist in DEFAULTS but not in the function signature
     default_only_keys = set(set(DEFAULTS.keys() - config.keys()))
@@ -302,7 +272,6 @@ def project_images(
         imageEngine.meta_headers, imageEngine.metadata = table_to_meta(table)
 
     _project_images(imageEngine, embeds, **config)
-
 
 # %% ../../nbs/00_bedmap.ipynb 20
 @call_parse
