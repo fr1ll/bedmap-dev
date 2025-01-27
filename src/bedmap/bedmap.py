@@ -7,8 +7,19 @@ import warnings
 warnings.filterwarnings("ignore")
 
 # %% auto 0
-__all__ = ['app', 'DEFAULTS', 'PILLoadTruncated', 'copy_root_dir', 'umap_args_to_list', 'test_butterfly_duplicate',
-           'test_butterfly', 'test_butterfly_missing_meta', 'test_no_meta_dir', 'project_images', 'embed_images']
+__all__ = [
+    "app",
+    "DEFAULTS",
+    "PILLoadTruncated",
+    "copy_root_dir",
+    "umap_args_to_list",
+    "test_butterfly_duplicate",
+    "test_butterfly",
+    "test_butterfly_missing_meta",
+    "test_no_meta_dir",
+    "project_images",
+    "embed_images",
+]
 
 # %% ../../nbs/00_bedmap.ipynb 4
 # print separately that we're loading dependencies, as this can take a while
@@ -19,6 +30,7 @@ print(timestamp(), "Loading dependencies - this takes some time")
 
 # %% ../../nbs/00_bedmap.ipynb 5
 from tqdm.auto import tqdm
+from fastcore.imports import in_ipython
 
 from .from_tables import glob_to_tables, table_to_meta
 from .web_config import get_bedmap_root, copy_web_assets
@@ -28,6 +40,7 @@ from .images import create_atlases_and_thumbs, ImageFactory
 
 # %% ../../nbs/00_bedmap.ipynb 6
 import typer
+
 app = typer.Typer()
 
 from shutil import rmtree
@@ -83,6 +96,7 @@ NB: Keras Image class objects return image.size as w,h
     Numpy array representations of images return image.shape as h,w,c
 """
 
+
 # %% ../../nbs/00_bedmap.ipynb 13
 def _project_images(imageEngine, embeds: Optional[np.ndarray] = None, **kwargs):
     """
@@ -114,6 +128,7 @@ def _project_images(imageEngine, embeds: Optional[np.ndarray] = None, **kwargs):
     # write_images(imageEngine)
     print(timestamp(), "Done!")
 
+
 # %% ../../nbs/00_bedmap.ipynb 14
 def umap_args_to_list(**kwargs):
     """Convert n_neighbors and min_dist arguments into lists
@@ -130,6 +145,7 @@ def umap_args_to_list(**kwargs):
         if not isinstance(kwargs[i], list):
             kwargs[i] = [kwargs[i]]
     return kwargs
+
 
 # %% ../../nbs/00_bedmap.ipynb 16
 copy_root_dir = get_bedmap_root()
@@ -193,6 +209,7 @@ def test_no_meta_dir(config):
     config["plot_id"] = "test_diff"
 
     return config
+
 
 # %% ../../nbs/00_bedmap.ipynb 18
 @app.command()
@@ -271,27 +288,16 @@ def project_images(
 
     _project_images(imageEngine, embeds, **config)
 
+
 # %% ../../nbs/00_bedmap.ipynb 20
-@call_parse
+@app.command()
 def embed_images(
-    images: Param(type=str, help="path or glob of images to process") = DEFAULTS["images"],
-    embed_model: Param(
-        type=str, help="pre-trained model from timm library to use to create embedding", required=False
-    ) = DEFAULTS["embed_model"],
-    out_dir: Param(type=str, help="the directory to which outputs will be saved", required=False) = DEFAULTS["out_dir"],
-    metadata: Param(
-        type=str, help="path to a csv or glob of JSON files with image metadata (see readme for format)"
-    ) = DEFAULTS["meta_dir"],
-    table_id: Param(
-        type=str, help="identifier for table that links embeddings to images and (optionally) metadata", required=False
-    ) = str(uuid.uuid1()),
-    table_format: Param(
-        type=str,
-        choices=["parquet", "csv"],
-        help="format for table linking embeddings, images, and metadata",
-        required=False,
-    ) = "parquet",
-    seed: Param(type=int, help="seed for random processes") = DEFAULTS["seed"],
+    images: Optional[str] = None,
+    embed_model: str = "vit_small_patch14_reg4_dinov2.lvd142m",
+    out_dir: str = "output",
+    metadata: Optional[str] = None,
+    table_format: str = "parquet",  # TODO: Change to options: parquet, csv
+    seed: int = 42,
 ):
     "Embed a folder of images and save embeddings as .npy file to disk"
 
