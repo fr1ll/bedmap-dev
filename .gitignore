@@ -1,3 +1,16 @@
+##### BEGIN CUSTOM SECTION
+manifest.txt
+output* # default results of running bedmap
+
+# force to include web folder
+!bedmap/web
+!bedmap/web/**/dist
+
+##### END CUSTOM SECTION
+
+
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
