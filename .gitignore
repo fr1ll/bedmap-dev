@@ -1,6 +1,7 @@
 ##### BEGIN CUSTOM SECTION
 manifest.txt
-output* # default results of running bedmap
+output*
+
 
 # force to include web folder
 !bedmap/web
