@@ -131,7 +131,7 @@ requires-dist = [
     { name = "pandas", specifier = ">=2.2.3" },
     { name = "pillow", specifier = ">=11.1.0" },
     { name = "pyarrow", specifier = ">=19.0.0" },
-    { name = "rasterfairy", specifier = ">=1.0.6" },
+    { name = "rasterfairy", git = "https://github.com/Quasimondo/RasterFairy.git" },
     { name = "timm", specifier = ">=1.0.14" },
     { name = "typer", specifier = ">=0.15.1" },
     { name = "umap-learn", specifier = "<=0.5.3" },
@@ -1913,14 +1913,14 @@ wheels = [
 
 [[package]]
 name = "rasterfairy"
-version = "1.0.6"
-source = { registry = "https://pypi.org/simple" }
+version = "1.0.4"
+source = { git = "https://github.com/Quasimondo/RasterFairy.git#dd6624370bd136b7f9b19061985aca6ac8b4e38b" }
 dependencies = [
+    { name = "ipython" },
     { name = "moviepy" },
     { name = "numpy" },
     { name = "scipy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e3/ca/d1676058069ac237fa8de6e39f7edd9a24f0fe142f2d0009f42f8cdf6e9e/rasterfairy-1.0.6.tar.gz", hash = "sha256:2e1b7738126da43fa543e39faa2bc81fb868d6ef68ee2d96c3fac6a0edc0d463", size = 26338 }
 
 [[package]]
 name = "requests"

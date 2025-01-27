@@ -15,7 +15,7 @@ dependencies = [
     "pandas>=2.2.3",
     "pillow>=11.1.0",
     "pyarrow>=19.0.0",
-    "rasterfairy>=1.0.6",
+    "rasterfairy",
     "timm>=1.0.14",
     "typer>=0.15.1",
     "umap-learn<=0.5.3",
@@ -54,6 +54,7 @@ dev-dependencies = [
 
 [tool.uv.sources]
 bedmap = { workspace = true }
+rasterfairy = { git = "https://github.com/Quasimondo/RasterFairy.git" }
 
 [tool.ruff]
 line-length = 120
