@@ -7,8 +7,19 @@ import warnings
 warnings.filterwarnings("ignore")
 
 # %% auto 0
-__all__ = ['app', 'DEFAULTS', 'PILLoadTruncated', 'copy_root_dir', 'umap_args_to_list', 'test_butterfly_duplicate',
-           'test_butterfly', 'test_butterfly_missing_meta', 'test_no_meta_dir', 'project_images', 'embed_images']
+__all__ = [
+    "app",
+    "DEFAULTS",
+    "PILLoadTruncated",
+    "copy_root_dir",
+    "umap_args_to_list",
+    "test_butterfly_duplicate",
+    "test_butterfly",
+    "test_butterfly_missing_meta",
+    "test_no_meta_dir",
+    "project_images",
+    "embed_images",
+]
 
 # %% ../../nbs/00_bedmap.ipynb 4
 # print separately that we're loading dependencies, as this can take a while
@@ -30,6 +41,7 @@ from .images import create_atlases_and_thumbs, ImageFactory
 # %% ../../nbs/00_bedmap.ipynb 6
 import arguably
 import typer
+
 app = typer.Typer()
 
 from shutil import rmtree
@@ -85,6 +97,7 @@ NB: Keras Image class objects return image.size as w,h
     Numpy array representations of images return image.shape as h,w,c
 """
 
+
 # %% ../../nbs/00_bedmap.ipynb 13
 def _project_images(imageEngine, embeds: Optional[np.ndarray] = None, **kwargs):
     """
@@ -116,6 +129,7 @@ def _project_images(imageEngine, embeds: Optional[np.ndarray] = None, **kwargs):
     # write_images(imageEngine)
     print(timestamp(), "Done!")
 
+
 # %% ../../nbs/00_bedmap.ipynb 14
 def umap_args_to_list(**kwargs):
     """Convert n_neighbors and min_dist arguments into lists
@@ -132,6 +146,7 @@ def umap_args_to_list(**kwargs):
         if not isinstance(kwargs[i], list):
             kwargs[i] = [kwargs[i]]
     return kwargs
+
 
 # %% ../../nbs/00_bedmap.ipynb 16
 copy_root_dir = get_bedmap_root()
@@ -196,6 +211,7 @@ def test_no_meta_dir(config):
 
     return config
 
+
 # %% ../../nbs/00_bedmap.ipynb 18
 @app.command()
 def project_images(
@@ -220,9 +236,9 @@ def project_images(
     shuffle: bool = False,
     seed: int = 24,
     n_clusters: int = 12,
-    geojson: Optional[str] = None
+    geojson: Optional[str] = None,
 ):
-    '''Convert a folder of images into a bedmap visualization'''
+    """Convert a folder of images into a bedmap visualization"""
 
     # grab local variables as configuration dict
 
@@ -272,6 +288,7 @@ def project_images(
         imageEngine.meta_headers, imageEngine.metadata = table_to_meta(table)
 
     _project_images(imageEngine, embeds, **config)
+
 
 # %% ../../nbs/00_bedmap.ipynb 20
 @call_parse
