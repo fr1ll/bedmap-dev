@@ -67,6 +67,11 @@ select = ["E", "F", "W", "I", "PD", "PERF", "UP", "C4"]
 [tool.ruff.lint.isort]
 known-first-party = ["bedmap"]
 
+[tool.ruff.lint.per-file-ignores]
+# Ignore `E402` (import violations) in all `*.ipynb` files.
+# Reason: nbdev typically does nbdev_export at the end of notebooks
+"*.ipynb" = ["E402"]
+
 [tool.coverage.run]
 source = ["src", "tests"]
 relative_files = true
