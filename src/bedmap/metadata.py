@@ -4,24 +4,22 @@
 __all__ = ["get_metadata_list", "write_metadata", "get_manifest"]
 
 # %% ../../nbs/07_metadata.ipynb 3
-import os
 import csv
 import json
+import os
+from collections import defaultdict
+from datetime import datetime
 from glob import glob
 from math import ceil
-from datetime import datetime
-from collections import defaultdict
-from typing import Optional, List, Union
 
 import numpy as np
 
-from .utils import clean_filename, FILE_NAME
-from .layouts import get_layouts, get_heightmap, get_hotspots
-from .utils import is_number, get_path, get_version, write_json, read_json
+from .layouts import get_heightmap, get_hotspots, get_layouts
+from .utils import FILE_NAME, clean_filename, get_path, get_version, is_number, read_json, write_json
 
 
 # %% ../../nbs/07_metadata.ipynb 5
-def get_metadata_list(meta_dir: str) -> Union[List[dict], List[str]]:
+def get_metadata_list(meta_dir: str) -> list[dict] | list[str]:
     """Return a list of objects with image metadata.
 
     Will create 'tags' key if 'category' is in metadata
@@ -64,7 +62,7 @@ def get_metadata_list(meta_dir: str) -> Union[List[dict], List[str]]:
 
 
 # %% ../../nbs/07_metadata.ipynb 6
-def write_metadata(imageEngine, gzip: Optional[bool] = False, encoding: Optional[str] = "utf8"):
+def write_metadata(imageEngine, gzip: bool | None = False, encoding: str | None = "utf8"):
     """Write list `metadata` of objects to disk
 
     Args:

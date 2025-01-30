@@ -30,38 +30,40 @@ __all__ = [
 ]
 
 # %% ../../nbs/05_layouts.ipynb 3
-from .utils import timestamp, get_path, write_json, read_json, round_floats, FILE_NAME
-from .utils import datestring_to_date, round_date, date_to_seconds
-
-import os
+import itertools
 import json
 import math
-import pickle
-import itertools
-from typing import List, Union
-from collections import defaultdict
-
-import numpy as np
-
-import operator
 import multiprocessing
-
-# TODO: Change math references to numpy
-
-from hdbscan import HDBSCAN
-from umap import UMAP, AlignedUMAP
-
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import minmax_scale
-from scipy.stats import kde
-
-
-import rasterfairy
-from rasterfairy import coonswarp
-import matplotlib.pyplot as plt
+import operator
+import os
+import pickle
+from collections import defaultdict
 
 # use qtagg backend in case on a headless machine
 import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import rasterfairy
+
+# TODO: Change math references to numpy
+from hdbscan import HDBSCAN
+from rasterfairy import coonswarp
+from scipy.stats import kde
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import minmax_scale
+from umap import UMAP, AlignedUMAP
+
+from bedmap.utils import (
+    FILE_NAME,
+    date_to_seconds,
+    datestring_to_date,
+    get_path,
+    read_json,
+    round_date,
+    round_floats,
+    timestamp,
+    write_json,
+)
 
 matplotlib.use("Agg")
 
@@ -364,7 +366,7 @@ class DateLayout(BaseMetaLayout):
                 "labels": labels_out_path,
             }
         # date layout is not cached, so fetch dates and process
-        print(timestamp(), "Creating date layout with {} columns".format(self.cols))
+        print(timestamp(), f"Creating date layout with {self.cols} columns")
         dates = [datestring_to_date(i) for i in dateStrings]
         rounded_dates = [round_date(i, self.bin_units) for i in dates]
 
@@ -838,7 +840,7 @@ def process_multi_layout_umap(v, imageEngine, **kwargs):
     print(timestamp(), "Creating multi-umap layout")
     params = []
     for n_neighbors, min_dist in itertools.product(kwargs["n_neighbors"], kwargs["min_dist"]):
-        filename = "umap-n_neighbors_{}-min_dist_{}".format(n_neighbors, min_dist)
+        filename = f"umap-n_neighbors_{n_neighbors}-min_dist_{min_dist}"
         out_path = get_path("layouts", filename, **kwargs)
         params.append(
             {
@@ -939,7 +941,7 @@ def process_multi_layout_umap(v, imageEngine, **kwargs):
     }
 
 
-def save_model(model: Union[AlignedUMAP, UMAP], path: str) -> None:
+def save_model(model: AlignedUMAP | UMAP, path: str) -> None:
     """Save AlignedUMAP model as a pickle
 
     Args:
@@ -967,7 +969,7 @@ def save_model(model: Union[AlignedUMAP, UMAP], path: str) -> None:
         print(timestamp(), "Could not save model")
 
 
-def load_model(path: str) -> Union[AlignedUMAP, UMAP]:
+def load_model(path: str) -> AlignedUMAP | UMAP:
     """Load AlignedUMAP from pickle
 
     Args:
@@ -1138,7 +1140,7 @@ class Box:
 # %% ../../nbs/05_layouts.ipynb 16
 def process_geojson(out_dir, geojson_path):
     """Given a GeoJSON filepath, write a minimal JSON output in lat lng coordinates"""
-    with open(geojson_path, "r") as f:
+    with open(geojson_path) as f:
         geojson = json.load(f)
 
     if isinstance(geojson, dict) and "geometry" in geojson:
@@ -1174,7 +1176,7 @@ def get_hotspots(imageEngine, layouts={}, use_high_dimensional_vectors=True, n_p
             write_json()
             get_path()
     """
-    print(timestamp(), "Clustering data with {}".format(cluster_method))
+    print(timestamp(), f"Clustering data with {cluster_method}")
     if use_high_dimensional_vectors:
         vecs = kwargs["vecs"]
     else:
@@ -1226,7 +1228,7 @@ def get_hotspots(imageEngine, layouts={}, use_high_dimensional_vectors=True, n_p
     clusters = d.values()
     clusters = sorted(clusters, key=lambda i: len(i["images"]), reverse=True)
     for idx, i in enumerate(clusters):
-        i["label"] = "Cluster {}".format(idx + 1)
+        i["label"] = f"Cluster {idx + 1}"
 
     # slice off the first `max_clusters`
     clusters = clusters[: kwargs["max_clusters"]]

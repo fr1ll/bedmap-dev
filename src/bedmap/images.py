@@ -15,27 +15,27 @@ __all__ = [
 ]
 
 # %% ../../nbs/03_images.ipynb 3
-import os
 import copy
-from glob import glob
+import os
 import random
 from abc import ABC, abstractmethod
-from typing import Optional, List, Union
+from glob import glob
 
 import numpy as np
+from PIL import Image as pil_image
+from PIL import ImageFile
 from tqdm.auto import tqdm
-from PIL import Image as pil_image, ImageFile
 
-from .utils import clean_filename, timestamp, FILE_NAME
 from .metadata import get_metadata_list
-
+from .utils import FILE_NAME, clean_filename, timestamp
 
 # handle truncated images in PIL (managed by Pillow)
 PILLoadTruncated = ImageFile.LOAD_TRUNCATED_IMAGES
 
 # imports when switching to PIL-only resizing
-from PIL import Image, ImageOps
 from pathlib import Path
+
+from PIL import Image
 
 
 # %% ../../nbs/03_images.ipynb 5
@@ -152,7 +152,7 @@ def create_atlases_and_thumbs(imageEngine, plot_id, use_cache: bool = False):
 
 
 # %% ../../nbs/03_images.ipynb 16
-def get_image_paths(images: str, out_dir: str) -> List[str]:
+def get_image_paths(images: str, out_dir: str) -> list[str]:
     """Called once to provide a list of image paths.
 
     args:
@@ -186,7 +186,7 @@ def get_image_paths(images: str, out_dir: str) -> List[str]:
 
 # %% ../../nbs/03_images.ipynb 18
 class Image:
-    def __init__(self, img_path: str, metadata: Optional[dict] = None) -> "Image":
+    def __init__(self, img_path: str, metadata: dict | None = None) -> "Image":
         self.path = img_path
         self._original = None
         self._filename = None
@@ -212,7 +212,7 @@ class Image:
             self._unique_name = self.filename
         return self._unique_name
 
-    def valid(self, lod_cell_height: int, oblong_ratio: Union[int, float]) -> tuple[bool, str]:
+    def valid(self, lod_cell_height: int, oblong_ratio: int | float) -> tuple[bool, str]:
         """Validate that image can be opened and loaded correctly.
 
         Args:
@@ -467,7 +467,7 @@ class ImageFactory(ImageFactoryBase):
         self.count = len(self.image_paths)
 
     @staticmethod
-    def stream_images(image_paths: List[str], metadata: Optional[List[dict]] = None) -> "Image":
+    def stream_images(image_paths: list[str], metadata: list[dict] | None = None) -> "Image":
         """Read in all images from args[0], a list of image paths
 
         Args:

@@ -4,13 +4,14 @@
 __all__ = ["DEVICE", "timm_embed_model", "timm_transform_embed", "get_timm_embeds"]
 
 # %% ../../nbs/04_embeddings.ipynb 3
-from .utils import timestamp, clean_filename
-
 from pathlib import Path
-from tqdm.auto import tqdm
+
 import numpy as np
-import torch
 import timm
+import torch
+from tqdm.auto import tqdm
+
+from .utils import clean_filename, timestamp
 
 # %% ../../nbs/04_embeddings.ipynb 4
 # global variables to help inference performance based on device

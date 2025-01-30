@@ -4,12 +4,13 @@
 __all__ = ["get_bedmap_root", "replace_web_strings", "byo_logo", "copy_web_assets"]
 
 # %% ../../nbs/06_web_config.ipynb 4
-from . import utils
-from .utils import get_version
-from fastcore.all import *
-import os
 from pathlib import Path
 from shutil import copy
+
+from fastcore.all import *
+
+from . import utils
+from .utils import get_version
 
 
 # %% ../../nbs/06_web_config.ipynb 5

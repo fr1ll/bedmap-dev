@@ -6,11 +6,11 @@
 __all__ = ["glob_to_tables", "table_to_meta"]
 
 # %% ../../nbs/08_from_tables.ipynb 3
+from glob import glob
+from pathlib import Path
+
 import pandas as pd
 import pyarrow.parquet as pq
-from pathlib import Path
-from glob import glob
-from typing import Tuple, List
 
 
 # %% ../../nbs/08_from_tables.ipynb 4
@@ -35,7 +35,7 @@ def glob_to_tables(pattern: str) -> pd.DataFrame:
 
 
 # %% ../../nbs/08_from_tables.ipynb 7
-def table_to_meta(table: pd.DataFrame) -> Tuple[List, List]:
+def table_to_meta(table: pd.DataFrame) -> tuple[list, list]:
     """convert table to metadata columns and list"""
     # viewer expects filename column
     table = table.rename(columns={"image_filename": "filename"})

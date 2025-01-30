@@ -18,13 +18,14 @@ __all__ = [
 ]
 
 # %% ../../nbs/01_utils.ipynb 2
+import datetime
+import gzip
+import json
 import os
 import sys
-import json
-import gzip
-import datetime
 from shutil import copytree
 from urllib.parse import unquote
+
 from dateutil.parser import parse as parse_date
 
 # %% ../../nbs/01_utils.ipynb 3
@@ -119,8 +120,8 @@ def datestring_to_date(datestring):
     """
     try:
         return parse_date(str(datestring), fuzzy=True, default=datetime.datetime(9999, 1, 1))
-    except Exception as exc:
-        print(timestamp(), "Could not parse datestring {}".format(datestring))
+    except Exception:
+        print(timestamp(), f"Could not parse datestring {datestring}")
         return datestring
 
 

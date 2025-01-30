@@ -28,27 +28,28 @@ from .utils import timestamp
 print(timestamp(), "Loading dependencies - this takes some time")
 
 # %% ../../nbs/00_bedmap.ipynb 5
-from tqdm.auto import tqdm
 from fastcore.imports import in_ipython
+from tqdm.auto import tqdm
 
-from .from_tables import glob_to_tables, table_to_meta
-from .web_config import get_bedmap_root, copy_web_assets
 from .embeddings import get_timm_embeds
+from .from_tables import glob_to_tables, table_to_meta
+from .images import ImageFactory, create_atlases_and_thumbs
 from .metadata import get_manifest, write_metadata
-from .images import create_atlases_and_thumbs, ImageFactory
+from .web_config import copy_web_assets, get_bedmap_root
 
 # %% ../../nbs/00_bedmap.ipynb 6
 import typer
 
 app = typer.Typer()
 
-from shutil import rmtree
-from pathlib import Path
-import uuid
-import sys
 import os
-import pandas as pd
+import sys
+import uuid
+from pathlib import Path
+from shutil import rmtree
+
 import numpy as np
+import pandas as pd
 
 # %% ../../nbs/00_bedmap.ipynb 9
 DEFAULTS = {

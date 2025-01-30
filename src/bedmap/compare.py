@@ -23,14 +23,13 @@ __all__ = [
 ]
 
 # %% ../../nbs/02_compare.ipynb 4
-import filecmp
-from shutil import rmtree
-from pathlib import Path
 import difflib
+import filecmp
 import json
-from typing import Optional, List, Union, Tuple
+from pathlib import Path
+from shutil import rmtree
 
-from . import utils, bedmap
+from . import bedmap, utils
 
 # %% ../../nbs/02_compare.ipynb 5
 # calling project_root instead of previous name of basedir to avoid confusion with baseline_dir
@@ -89,7 +88,7 @@ COMPARE_FILES = [
 
 
 # %% ../../nbs/02_compare.ipynb 9
-def log_output(txt: str, space: Optional[int] = 0) -> None:
+def log_output(txt: str, space: int | None = 0) -> None:
     # Hook for logging results
     if isinstance(txt, str):
         print(f'{" " * space}{txt}')
@@ -98,7 +97,7 @@ def log_output(txt: str, space: Optional[int] = 0) -> None:
 
 
 # %% ../../nbs/02_compare.ipynb 10
-def clean_diff_output(msg: List[str]) -> str:
+def clean_diff_output(msg: list[str]) -> str:
     """Clean differ.compare() output to only show difference"""
     cleanMsg = ""
     for line in msg:
@@ -151,7 +150,7 @@ def fix_expected_diff():
 
 
 # %% ../../nbs/02_compare.ipynb 14
-def try_read_text(filename: Path) -> Union[List[str], None]:
+def try_read_text(filename: Path) -> list[str] | None:
     """Check if file can be read as text"""
     try:
         with filename.open() as f:
@@ -162,7 +161,7 @@ def try_read_text(filename: Path) -> Union[List[str], None]:
 
 
 # %% ../../nbs/02_compare.ipynb 15
-def useful_text_diff(file1: str, file2: str) -> Tuple[Union[bool, None], str]:
+def useful_text_diff(file1: str, file2: str) -> tuple[bool | None, str]:
     """This function compares two files to return text difference, if they are textfiles.
 
     Args:
@@ -182,7 +181,7 @@ def useful_text_diff(file1: str, file2: str) -> Tuple[Union[bool, None], str]:
                 differ = difflib.Differ()
                 diff = list(differ.compare(file1_lines, file2_lines))
                 diff = clean_diff_output(diff)
-                if diff is "":
+                if diff == "":
                     return False, ""
                 return True, diff
             else:
@@ -205,10 +204,10 @@ def compare_named_files():
         file_pix = baseline_dir / file
         chk, txt = useful_text_diff(file_clip, file_pix)
         if chk is True:
-            log_output(f"- Fail", 2)
+            log_output("- Fail", 2)
             log_output(txt, 4)
         else:
-            log_output(f"+ Identical", 2)
+            log_output("+ Identical", 2)
 
 
 # %% ../../nbs/02_compare.ipynb 18
