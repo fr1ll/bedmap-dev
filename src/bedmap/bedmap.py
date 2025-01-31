@@ -38,10 +38,6 @@ from .metadata import get_manifest, write_metadata
 from .web_config import copy_web_assets, get_bedmap_root
 
 # %% ../../nbs/00_bedmap.ipynb 6
-import typer
-
-app = typer.Typer()
-
 import os
 import sys
 import uuid
@@ -50,6 +46,9 @@ from shutil import rmtree
 
 import numpy as np
 import pandas as pd
+import typer
+
+app = typer.Typer()
 
 # %% ../../nbs/00_bedmap.ipynb 9
 DEFAULTS = {

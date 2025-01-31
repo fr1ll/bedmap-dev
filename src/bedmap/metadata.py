@@ -15,7 +15,7 @@ from math import ceil
 import numpy as np
 
 from .layouts import get_heightmap, get_hotspots, get_layouts
-from .utils import FILE_NAME, clean_filename, get_path, get_version, is_number, read_json, write_json
+from .utils import FILE_NAME, clean_filename, get_path, get_version, read_json, write_json
 
 
 # %% ../../nbs/07_metadata.ipynb 5
@@ -130,7 +130,7 @@ def write_metadata(imageEngine, gzip: bool | None = False, encoding: str | None 
             date_d[date].append(clean_filename(i[FILE_NAME]))
 
     # find the min and max dates to show on the date slider
-    dates = np.array([int(i.strip()) for i in date_d if is_number(i)])
+    dates = np.array([int(i.strip()) for i in date_d if isinstance(i, int)])
     domain = {"min": float("inf"), "max": -float("inf")}
     mean = np.mean(dates)
     std = np.std(dates)

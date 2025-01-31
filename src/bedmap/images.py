@@ -9,7 +9,8 @@ __all__ = [
     "autocontrast",
     "create_atlases_and_thumbs",
     "get_image_paths",
-    "Image",
+    "ValidImage",
+    "find_duplicates",
     "ImageFactoryBase",
     "ImageFactory",
 ]
@@ -22,8 +23,7 @@ from abc import ABC, abstractmethod
 from glob import glob
 
 import numpy as np
-from PIL import Image as pil_image
-from PIL import ImageFile
+from PIL import Image, ImageFile
 from tqdm.auto import tqdm
 
 from .metadata import get_metadata_list
@@ -35,17 +35,15 @@ PILLoadTruncated = ImageFile.LOAD_TRUNCATED_IMAGES
 # imports when switching to PIL-only resizing
 from pathlib import Path
 
-from PIL import Image
-
 
 # %% ../../nbs/03_images.ipynb 5
-def load_image(image_path: str, format: str = "RGB") -> pil_image:
+def load_image(image_path: str, format: str = "RGB") -> Image:
     """load an image and convert to desired format"""
-    return pil_image.open(image_path).convert(format)
+    return Image.open(image_path).convert(format)
 
 
 # %% ../../nbs/03_images.ipynb 8
-def resize_to_max_side(img: pil_image, n: int = 128):
+def resize_to_max_side(img: Image, n: int = 128):
     """
     resize to a maximum side length
     """
@@ -60,7 +58,7 @@ def resize_to_max_side(img: pil_image, n: int = 128):
 
 
 # %% ../../nbs/03_images.ipynb 9
-def resize_to_height(img: pil_image, height: int = 128):
+def resize_to_height(img: Image, height: int = 128):
     """
     resize to an exact height
     """
@@ -74,7 +72,7 @@ def resize_to_height(img: pil_image, height: int = 128):
 
 
 # %% ../../nbs/03_images.ipynb 11
-def autocontrast(img: pil_image) -> pil_image:
+def autocontrast(img: Image) -> Image:
     """autocontrast lifted from keras library
     added lightness normalization"""
     x = np.asarray(img, dtype=float)
@@ -88,7 +86,7 @@ def autocontrast(img: pil_image) -> pil_image:
     ## return to average lightness of input image
     mean_shift = x.mean() - mean_before
     x = np.clip(x - mean_shift, 0, 255)
-    return pil_image.fromarray(x.astype("uint8"))
+    return Image.fromarray(x.astype("uint8"))
 
 
 # %% ../../nbs/03_images.ipynb 15
@@ -139,7 +137,7 @@ def create_atlases_and_thumbs(imageEngine, plot_id, use_cache: bool = False):
             n_atlases += 1
             x, y = 0, 0  # start a new atlas
         if x == 0 and y == 0:
-            atlas = pil_image.new(mode="RGB", size=atlas_size)
+            atlas = Image.new(mode="RGB", size=atlas_size)
         atlas.paste(cell, (x, y))
 
         # store in dict
@@ -185,8 +183,13 @@ def get_image_paths(images: str, out_dir: str) -> list[str]:
 
 
 # %% ../../nbs/03_images.ipynb 18
-class Image:
-    def __init__(self, img_path: str, metadata: dict | None = None) -> "Image":
+class ValidImage:
+    """
+    TODO: Convert to dataclass
+    TODO: Rename
+    """
+
+    def __init__(self, img_path: str, metadata: dict | None = None) -> "ValidImage":
         self.path = img_path
         self._original = None
         self._filename = None
@@ -230,7 +233,7 @@ class Image:
             return False, f"Skipping {self.path} because it contains 0 height or width"
         # remove images that have 0 height or width when resized
         try:
-            resized = resize_to_height(self.original, height=lod_cell_height)
+            _ = resize_to_height(self.original, height=lod_cell_height)
         except ValueError:
             return False, f"Skipping {self.path} because it contains 0 height or width when resized"
         except OSError:
@@ -243,6 +246,13 @@ class Image:
 
 
 # %% ../../nbs/03_images.ipynb 20
+def find_duplicates(maybe_dups: list) -> set:
+    """return any duplicates from a list"""
+    seen = set()
+    return {x for x in maybe_dups if x in seen or seen.add(x)}
+
+
+# %% ../../nbs/03_images.ipynb 21
 class ImageFactoryBase(ABC):
     """Class encapsulates functionality required to access images,
     including compiling metadata.
@@ -294,12 +304,12 @@ class ImageFactoryBase(ABC):
 
     @abstractmethod
     def __iter__(self):
-        # Yield an Image instance
+        # Yield a ValidImage instance
         pass
 
     @abstractmethod
     def __getitem__(self, index):
-        # Return index's Image instance
+        # Return index's ValidImage instance
         pass
 
 
@@ -338,7 +348,7 @@ class ImageFactory(ImageFactoryBase):
             else:
                 meta = None
 
-            return Image(self.image_paths[index], meta)
+            return ValidImage(self.image_paths[index], meta)
 
     def filter_images(self):
         """Main method for filtering images given user metadata (if provided)
@@ -467,7 +477,7 @@ class ImageFactory(ImageFactoryBase):
         self.count = len(self.image_paths)
 
     @staticmethod
-    def stream_images(image_paths: list[str], metadata: list[dict] | None = None) -> "Image":
+    def stream_images(image_paths: list[str], metadata: list[dict] | None = None) -> "ValidImage":
         """Read in all images from args[0], a list of image paths
 
         Args:
@@ -475,7 +485,7 @@ class ImageFactory(ImageFactoryBase):
             metadata (Optional[list[dist]]): metadata for each image
 
         Returns:
-            yields Image instance
+            yields ValidImage instance
 
         Notes:
             image is matched to metadata by index location
@@ -486,6 +496,6 @@ class ImageFactory(ImageFactoryBase):
                 meta = None
                 if metadata and metadata[idx]:
                     meta = metadata[idx]
-                yield Image(imgPath, meta)
+                yield ValidImage(imgPath, meta)
             except Exception as exc:
                 print(timestamp(), "Image", imgPath, "could not be processed --", exc)

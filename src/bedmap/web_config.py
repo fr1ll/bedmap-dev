@@ -5,7 +5,7 @@ __all__ = ["get_bedmap_root", "replace_web_strings", "byo_logo", "copy_web_asset
 
 # %% ../../nbs/06_web_config.ipynb 4
 from pathlib import Path
-from shutil import copy
+from shutil import copy, copytree
 
 from fastcore.all import *
 
@@ -57,7 +57,7 @@ def copy_web_assets(out_dir: str, tagline: str, logo: str) -> None:
 
     # resolve will handle cases with ../ in the path
     dest = Path.cwd() / Path(out_dir).resolve()
-    utils.copytree_agnostic(src.as_posix(), dest.as_posix())
+    copytree(src.as_posix(), dest.as_posix(), dirs_exist_ok=True)
 
     # write version numbers into output
     replace_web_strings(dest, {"VERSION_NUMBER": get_version(), "Image Fields in a Local Collection": tagline})

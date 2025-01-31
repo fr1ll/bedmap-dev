@@ -27,9 +27,9 @@ import difflib
 import filecmp
 import json
 from pathlib import Path
-from shutil import rmtree
+from shutil import copytree, rmtree
 
-from . import bedmap, utils
+from . import bedmap
 
 # %% ../../nbs/02_compare.ipynb 5
 # calling project_root instead of previous name of basedir to avoid confusion with baseline_dir
@@ -134,7 +134,7 @@ def manifest_replace_write(manifest_filename):
 def copy_file():
     """copy baseline directory to temporary directory"""
     delete_temp()
-    utils.copytree_agnostic(baseline_dir, temp_dir)
+    copytree(baseline_dir, temp_dir, dirs_exist_ok=True)
 
 
 def fix_expected_diff():
@@ -236,7 +236,7 @@ def comFile():
             try:
                 # Check for different files
                 if curr.diff_files:
-                    loc = curr.right.replace(str(temp_dir), "")
+                    # loc = curr.right.replace(str(temp_dir), "")
                     # This difference can relate to mtime alone -- not important in itself
                     # log_output(f'Different at {loc}:\n    {curr.diff_files}\n',2)
                     for asset in curr.diff_files:
@@ -250,8 +250,7 @@ def comFile():
                     fail = True
 
                 # Update queue
-                for k, v in curr.subdirs.items():
-                    currs.append(v)
+                currs += list(curr.subdirs.values())
 
                 # Check if baseline_dir is missing files/folders
                 for asset in curr.left_list:
