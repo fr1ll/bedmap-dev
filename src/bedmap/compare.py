@@ -22,7 +22,7 @@ __all__ = [
     "comFile",
 ]
 
-# %% ../../nbs/02_compare.ipynb 4
+# %% ../../nbs/02_compare.ipynb 3
 import difflib
 import filecmp
 import json
@@ -31,7 +31,7 @@ from shutil import copytree, rmtree
 
 from . import bedmap
 
-# %% ../../nbs/02_compare.ipynb 5
+# %% ../../nbs/02_compare.ipynb 4
 # calling project_root instead of previous name of basedir to avoid confusion with baseline_dir
 project_root = bedmap.get_bedmap_root()
 
@@ -41,7 +41,7 @@ temp_dir = project_root / "tests/butterflies_baseline_temp"
 
 baseline_proj_root = "/home/carlo/source/bedmap"
 
-# %% ../../nbs/02_compare.ipynb 7
+# %% ../../nbs/02_compare.ipynb 6
 MANIFEST1 = "data/manifests/manifest-test_diff.json"
 MANIFEST2 = "data/manifest.json"
 
@@ -87,7 +87,7 @@ COMPARE_FILES = [
 ]
 
 
-# %% ../../nbs/02_compare.ipynb 9
+# %% ../../nbs/02_compare.ipynb 8
 def log_output(txt: str, space: int | None = 0) -> None:
     # Hook for logging results
     if isinstance(txt, str):
@@ -96,7 +96,7 @@ def log_output(txt: str, space: int | None = 0) -> None:
         print("".join(txt))
 
 
-# %% ../../nbs/02_compare.ipynb 10
+# %% ../../nbs/02_compare.ipynb 9
 def clean_diff_output(msg: list[str]) -> str:
     """Clean differ.compare() output to only show difference"""
     cleanMsg = ""
@@ -112,7 +112,7 @@ def delete_temp():
         rmtree(temp_dir)
 
 
-# %% ../../nbs/02_compare.ipynb 11
+# %% ../../nbs/02_compare.ipynb 10
 def manifest_replace_write(manifest_filename):
     """replace dates and filenames in baseline manifest files"""
     new_m = (clip_plt_dir / manifest_filename).read_text()
@@ -130,7 +130,7 @@ def manifest_replace_write(manifest_filename):
     (temp_dir / manifest_filename).write_text(old_m)
 
 
-# %% ../../nbs/02_compare.ipynb 12
+# %% ../../nbs/02_compare.ipynb 11
 def copy_file():
     """copy baseline directory to temporary directory"""
     delete_temp()
@@ -149,7 +149,7 @@ def fix_expected_diff():
     manifest_replace_write(MANIFEST2)
 
 
-# %% ../../nbs/02_compare.ipynb 14
+# %% ../../nbs/02_compare.ipynb 13
 def try_read_text(filename: Path) -> list[str] | None:
     """Check if file can be read as text"""
     try:
@@ -160,7 +160,7 @@ def try_read_text(filename: Path) -> list[str] | None:
         return None
 
 
-# %% ../../nbs/02_compare.ipynb 15
+# %% ../../nbs/02_compare.ipynb 14
 def useful_text_diff(file1: str, file2: str) -> tuple[bool | None, str]:
     """This function compares two files to return text difference, if they are textfiles.
 
@@ -192,7 +192,7 @@ def useful_text_diff(file1: str, file2: str) -> tuple[bool | None, str]:
         return None, "Could not open files"
 
 
-# %% ../../nbs/02_compare.ipynb 16
+# %% ../../nbs/02_compare.ipynb 15
 def compare_named_files():
     """Function loops named files in the COMPARE_FILES
     list to compare the files form the legacy output and
@@ -210,7 +210,7 @@ def compare_named_files():
             log_output("+ Identical", 2)
 
 
-# %% ../../nbs/02_compare.ipynb 18
+# %% ../../nbs/02_compare.ipynb 17
 def comFile():
     """Compare two directories
 
@@ -281,6 +281,6 @@ def comFile():
     return fail
 
 
-# %% ../../nbs/02_compare.ipynb 19
+# %% ../../nbs/02_compare.ipynb 18
 if __name__ == "__main__":
     comFile()

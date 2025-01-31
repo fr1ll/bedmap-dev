@@ -15,7 +15,7 @@ __all__ = [
     "clean_filename",
 ]
 
-# %% ../../nbs/01_utils.ipynb 2
+# %% ../../nbs/01_utils.ipynb 1
 import datetime
 import gzip
 import json
@@ -24,11 +24,11 @@ from urllib.parse import unquote
 
 from dateutil.parser import parse as parse_date
 
-# %% ../../nbs/01_utils.ipynb 3
+# %% ../../nbs/01_utils.ipynb 2
 FILE_NAME = "filename"  # Filename name key
 
 
-# %% ../../nbs/01_utils.ipynb 4
+# %% ../../nbs/01_utils.ipynb 3
 def get_version():
     """
     Return the version of bedmap installed
@@ -38,13 +38,13 @@ def get_version():
     return "0.0.1"
 
 
-# %% ../../nbs/01_utils.ipynb 6
+# %% ../../nbs/01_utils.ipynb 5
 def round_floats(obj, digits=5):
     """Return 2D array obj with rounded float precision"""
     return [[round(float(j), digits) for j in i] for i in obj]
 
 
-# %% ../../nbs/01_utils.ipynb 8
+# %% ../../nbs/01_utils.ipynb 7
 def date_to_seconds(date):
     """
     Given a datetime object return an integer representation for that datetime
@@ -85,13 +85,13 @@ def round_date(date, unit):
     return date
 
 
-# %% ../../nbs/01_utils.ipynb 9
+# %% ../../nbs/01_utils.ipynb 8
 def timestamp():
     """Return a string for printing the current time"""
     return str(datetime.datetime.now()) + ":"
 
 
-# %% ../../nbs/01_utils.ipynb 10
+# %% ../../nbs/01_utils.ipynb 9
 def datestring_to_date(datestring):
     """
     Given a string representing a date return a datetime object
@@ -103,7 +103,7 @@ def datestring_to_date(datestring):
         return datestring
 
 
-# %% ../../nbs/01_utils.ipynb 12
+# %% ../../nbs/01_utils.ipynb 11
 def get_path(*args, **kwargs):
     """Return the path to a JSON file with conditional gz extension
 
@@ -132,7 +132,7 @@ def get_path(*args, **kwargs):
     return path
 
 
-# %% ../../nbs/01_utils.ipynb 13
+# %% ../../nbs/01_utils.ipynb 12
 def write_json(path, obj, **kwargs):
     """Write json object `obj` to disk and return the path to that file
 
@@ -171,7 +171,7 @@ def read_json(path, **kwargs):
         return json.load(f)
 
 
-# %% ../../nbs/01_utils.ipynb 16
+# %% ../../nbs/01_utils.ipynb 15
 def clean_filename(s, **kwargs):
     """Given a string that points to a filename, return a clean filename
 

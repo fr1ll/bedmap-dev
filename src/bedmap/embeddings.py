@@ -3,7 +3,7 @@
 # %% auto 0
 __all__ = ["DEVICE", "timm_embed_model", "timm_transform_embed", "get_timm_embeds"]
 
-# %% ../../nbs/04_embeddings.ipynb 3
+# %% ../../nbs/04_embeddings.ipynb 2
 from pathlib import Path
 
 import numpy as np
@@ -13,7 +13,7 @@ from tqdm.auto import tqdm
 
 from .utils import clean_filename, timestamp
 
-# %% ../../nbs/04_embeddings.ipynb 4
+# %% ../../nbs/04_embeddings.ipynb 3
 # global variables to help inference performance based on device
 DEVICE = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 if DEVICE.type == "cpu":
@@ -26,7 +26,7 @@ else:
 print(f"Device for inference: {DEVICE}; dtype for inference: {TORCH_DTYPE}")
 
 
-# %% ../../nbs/04_embeddings.ipynb 6
+# %% ../../nbs/04_embeddings.ipynb 5
 def timm_embed_model(model_name: str):
     """
     Load model and image transform to create embeddings
@@ -47,7 +47,7 @@ def timm_embed_model(model_name: str):
     return m, t
 
 
-# %% ../../nbs/04_embeddings.ipynb 7
+# %% ../../nbs/04_embeddings.ipynb 6
 def timm_transform_embed(img, model, transform, device, dtype) -> np.ndarray:
     """
     apply transform to image and run inference on it to generate an embedding
@@ -63,7 +63,7 @@ def timm_transform_embed(img, model, transform, device, dtype) -> np.ndarray:
     return emb.detach().cpu().float().numpy().squeeze()
 
 
-# %% ../../nbs/04_embeddings.ipynb 8
+# %% ../../nbs/04_embeddings.ipynb 7
 def get_timm_embeds(imageEngine, model_name: str, data_dir: Path, **kwargs):
     """
     Create embedding vectors for input images using a pre-trained model from timm

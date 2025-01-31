@@ -3,7 +3,7 @@
 # %% auto 0
 __all__ = ["get_bedmap_root", "replace_web_strings", "byo_logo", "copy_web_assets"]
 
-# %% ../../nbs/06_web_config.ipynb 4
+# %% ../../nbs/06_web_config.ipynb 3
 from pathlib import Path
 from shutil import copy, copytree
 
@@ -13,7 +13,7 @@ from . import utils
 from .utils import get_version
 
 
-# %% ../../nbs/06_web_config.ipynb 5
+# %% ../../nbs/06_web_config.ipynb 4
 def get_bedmap_root() -> Path:
     # ipython doesn't have __file__ attribute
     if in_ipython():
@@ -22,7 +22,7 @@ def get_bedmap_root() -> Path:
         return Path(__file__).parents[1]
 
 
-# %% ../../nbs/06_web_config.ipynb 6
+# %% ../../nbs/06_web_config.ipynb 5
 def replace_web_strings(web_dir: Path, from_to: dict):
     """sequentially replace strings based on dict"""
     for i in ["index.html", "assets/js/tsne.js"]:
@@ -33,7 +33,7 @@ def replace_web_strings(web_dir: Path, from_to: dict):
         f.write_text(t)
 
 
-# %% ../../nbs/06_web_config.ipynb 7
+# %% ../../nbs/06_web_config.ipynb 6
 def byo_logo(web_dir: Path, logo_path: Path):
     """copy logo into web folder and replace reference in index.html"""
     logo_dest = web_dir / "assets/images" / logo_path.name
@@ -41,7 +41,7 @@ def byo_logo(web_dir: Path, logo_path: Path):
     replace_web_strings(web_dir, {"dhlab-logo.svg": logo_path.name, "DHLab logo": "Custom logo"})
 
 
-# %% ../../nbs/06_web_config.ipynb 8
+# %% ../../nbs/06_web_config.ipynb 7
 def copy_web_assets(out_dir: str, tagline: str, logo: str) -> None:
     """Copy the /web directory from the bedmap source to the users cwd.
     Copies version number into assets.

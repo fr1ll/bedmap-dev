@@ -29,7 +29,7 @@ __all__ = [
     "get_layouts",
 ]
 
-# %% ../../nbs/05_layouts.ipynb 3
+# %% ../../nbs/05_layouts.ipynb 2
 import itertools
 import json
 import math
@@ -67,7 +67,7 @@ from bedmap.utils import (
 
 matplotlib.use("Agg")
 
-# %% ../../nbs/05_layouts.ipynb 5
+# %% ../../nbs/05_layouts.ipynb 4
 ## Ignoring cuml-umap for now to avoid conditional import
 ## We may add cuml-umap option back later
 ## if profiling shows it may give speedup
@@ -81,7 +81,7 @@ https://docs.rapids.ai/api/cuml/stable/
 cuml_ready = False
 cluster_method = "hdbscan"
 
-# %% ../../nbs/05_layouts.ipynb 9
+# %% ../../nbs/05_layouts.ipynb 8
 from abc import ABC, abstractmethod
 
 
@@ -565,7 +565,7 @@ class GeographicLayout(BaseMetaLayout):
         return None
 
 
-# %% ../../nbs/05_layouts.ipynb 10
+# %% ../../nbs/05_layouts.ipynb 9
 def write_layout(path, obj, **kwargs):
     """Write layout json `obj` to disk and return the path to the saved file
 
@@ -592,7 +592,7 @@ def write_layout(path, obj, **kwargs):
     return write_json(path, obj, **kwargs)
 
 
-# %% ../../nbs/05_layouts.ipynb 11
+# %% ../../nbs/05_layouts.ipynb 10
 def get_umap_layout(imageEngine, **kwargs):
     """Get the x,y positions of images passed through a umap projection
 
@@ -1020,7 +1020,7 @@ def get_umap_model(**kwargs):
         )
 
 
-# %% ../../nbs/05_layouts.ipynb 12
+# %% ../../nbs/05_layouts.ipynb 11
 def get_rasterfairy_layout(**kwargs):
     """Get the x, y position of images passed through a rasterfairy projection
 
@@ -1064,7 +1064,7 @@ def get_rasterfairy_layout(**kwargs):
     return write_layout(out_path, pos, **kwargs)
 
 
-# %% ../../nbs/05_layouts.ipynb 14
+# %% ../../nbs/05_layouts.ipynb 13
 def get_categorical_boxes(group_counts, margin=2):
     """
     @arg [int] group_counts: counts of the number of images in each
@@ -1137,7 +1137,7 @@ class Box:
         self.y = None if len(args) < 5 else args[4]
 
 
-# %% ../../nbs/05_layouts.ipynb 16
+# %% ../../nbs/05_layouts.ipynb 15
 def process_geojson(out_dir, geojson_path):
     """Given a GeoJSON filepath, write a minimal JSON output in lat lng coordinates"""
     with open(geojson_path) as f:
@@ -1158,7 +1158,7 @@ def process_geojson(out_dir, geojson_path):
         json.dump(l, out)
 
 
-# %% ../../nbs/05_layouts.ipynb 18
+# %% ../../nbs/05_layouts.ipynb 17
 def get_hotspots(imageEngine, layouts={}, use_high_dimensional_vectors=True, n_preproc_dims=-1, **kwargs):
     """Return the stable clusters from the condensed tree of connected components from the density graph
 
@@ -1292,7 +1292,7 @@ def get_heightmap(path, label, **kwargs):
     plt.savefig(out_path, pad_inches=0)
 
 
-# %% ../../nbs/05_layouts.ipynb 19
+# %% ../../nbs/05_layouts.ipynb 18
 ##
 # Layouts
 ##

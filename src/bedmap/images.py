@@ -15,7 +15,7 @@ __all__ = [
     "ImageFactory",
 ]
 
-# %% ../../nbs/03_images.ipynb 3
+# %% ../../nbs/03_images.ipynb 2
 import copy
 import os
 import random
@@ -36,13 +36,13 @@ PILLoadTruncated = ImageFile.LOAD_TRUNCATED_IMAGES
 from pathlib import Path
 
 
-# %% ../../nbs/03_images.ipynb 5
+# %% ../../nbs/03_images.ipynb 4
 def load_image(image_path: str, format: str = "RGB") -> Image:
     """load an image and convert to desired format"""
     return Image.open(image_path).convert(format)
 
 
-# %% ../../nbs/03_images.ipynb 8
+# %% ../../nbs/03_images.ipynb 7
 def resize_to_max_side(img: Image, n: int = 128):
     """
     resize to a maximum side length
@@ -57,7 +57,7 @@ def resize_to_max_side(img: Image, n: int = 128):
     return img.resize(size, reducing_gap=2.0)
 
 
-# %% ../../nbs/03_images.ipynb 9
+# %% ../../nbs/03_images.ipynb 8
 def resize_to_height(img: Image, height: int = 128):
     """
     resize to an exact height
@@ -71,7 +71,7 @@ def resize_to_height(img: Image, height: int = 128):
     return img.resize(size, reducing_gap=2.0)
 
 
-# %% ../../nbs/03_images.ipynb 11
+# %% ../../nbs/03_images.ipynb 10
 def autocontrast(img: Image) -> Image:
     """autocontrast lifted from keras library
     added lightness normalization"""
@@ -89,7 +89,7 @@ def autocontrast(img: Image) -> Image:
     return Image.fromarray(x.astype("uint8"))
 
 
-# %% ../../nbs/03_images.ipynb 15
+# %% ../../nbs/03_images.ipynb 14
 def create_atlases_and_thumbs(imageEngine, plot_id, use_cache: bool = False):
     """create folder with atlases in data dir"""
 
@@ -149,7 +149,7 @@ def create_atlases_and_thumbs(imageEngine, plot_id, use_cache: bool = False):
     return atlas_dir.as_posix(), positions
 
 
-# %% ../../nbs/03_images.ipynb 16
+# %% ../../nbs/03_images.ipynb 15
 def get_image_paths(images: str, out_dir: str) -> list[str]:
     """Called once to provide a list of image paths.
 
@@ -182,7 +182,7 @@ def get_image_paths(images: str, out_dir: str) -> list[str]:
     return image_paths
 
 
-# %% ../../nbs/03_images.ipynb 18
+# %% ../../nbs/03_images.ipynb 17
 class ValidImage:
     """
     TODO: Convert to dataclass
@@ -245,14 +245,14 @@ class ValidImage:
         return True, ""
 
 
-# %% ../../nbs/03_images.ipynb 20
+# %% ../../nbs/03_images.ipynb 19
 def find_duplicates(maybe_dups: list) -> set:
     """return any duplicates from a list"""
     seen = set()
     return {x for x in maybe_dups if x in seen or seen.add(x)}
 
 
-# %% ../../nbs/03_images.ipynb 21
+# %% ../../nbs/03_images.ipynb 20
 class ImageFactoryBase(ABC):
     """Class encapsulates functionality required to access images,
     including compiling metadata.

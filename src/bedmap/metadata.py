@@ -3,7 +3,7 @@
 # %% auto 0
 __all__ = ["get_metadata_list", "write_metadata", "get_manifest"]
 
-# %% ../../nbs/07_metadata.ipynb 3
+# %% ../../nbs/07_metadata.ipynb 2
 import csv
 import json
 import os
@@ -18,7 +18,7 @@ from .layouts import get_heightmap, get_hotspots, get_layouts
 from .utils import FILE_NAME, clean_filename, get_path, get_version, read_json, write_json
 
 
-# %% ../../nbs/07_metadata.ipynb 5
+# %% ../../nbs/07_metadata.ipynb 4
 def get_metadata_list(meta_dir: str) -> list[dict] | list[str]:
     """Return a list of objects with image metadata.
 
@@ -61,7 +61,7 @@ def get_metadata_list(meta_dir: str) -> list[dict] | list[str]:
     return metaList, headers
 
 
-# %% ../../nbs/07_metadata.ipynb 6
+# %% ../../nbs/07_metadata.ipynb 5
 def write_metadata(imageEngine, gzip: bool | None = False, encoding: str | None = "utf8"):
     """Write list `metadata` of objects to disk
 
@@ -152,7 +152,7 @@ def write_metadata(imageEngine, gzip: bool | None = False, encoding: str | None 
         )
 
 
-# %% ../../nbs/07_metadata.ipynb 7
+# %% ../../nbs/07_metadata.ipynb 6
 ##
 # Main
 ##
