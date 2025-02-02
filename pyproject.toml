@@ -8,6 +8,7 @@ dependencies = [
     "accelerate>=1.3.0",
     "arguably>=1.3.0",
     "fastcore>=1.7.19",
+    "getdaft>=0.4.3",
     "hdbscan==0.8.39",
     "llvmlite>=0.44",
     "matplotlib>=3.10.0",
