@@ -99,6 +99,7 @@ dependencies = [
     { name = "pandas" },
     { name = "pillow" },
     { name = "pyarrow" },
+    { name = "pytexturepacker" },
     { name = "rasterfairy" },
     { name = "timm" },
     { name = "typer" },
@@ -133,6 +134,7 @@ requires-dist = [
     { name = "pandas", specifier = ">=2.2.3" },
     { name = "pillow", specifier = ">=11.1.0" },
     { name = "pyarrow", specifier = ">=19.0.0" },
+    { name = "pytexturepacker", specifier = ">=1.2.1" },
     { name = "rasterfairy", git = "https://github.com/Quasimondo/RasterFairy.git" },
     { name = "timm", specifier = ">=1.0.14" },
     { name = "typer", specifier = ">=0.15.1" },
@@ -1772,6 +1774,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/8b/6c/62bbd536103af674e227c41a8f3dcd022d591f6eed5facb5a0f31ee33bbc/pytest-8.3.3.tar.gz", hash = "sha256:70b98107bd648308a7952b06e6ca9a50bc660be218d53c257cc1fc94fda10181", size = 1442487 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/6b/77/7440a06a8ead44c7757a64362dd22df5760f9b12dc5f11b6188cd2fc27a0/pytest-8.3.3-py3-none-any.whl", hash = "sha256:a6853c7375b2663155079443d2e45de913a911a11d669df02a50814944db57b2", size = 342341 },
+]
+
+[[package]]
+name = "pytexturepacker"
+version = "1.2.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pillow" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a8/c0/c26969414cd23c13d8e68fc74b1a2766478397d91eb6a46cab0042af2b94/PyTexturePacker-1.2.1.tar.gz", hash = "sha256:9a3b512c8644f462bd3b974d71f60a0083734e13df5308b75f01f3e744b2b55c", size = 16075 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/59/88/326a1459e27cfa470d9f0bc3343c47c1bfd2e1d6766705387cc7b9da7f34/PyTexturePacker-1.2.1-py3-none-any.whl", hash = "sha256:53db04d8ea130c4cf1bd48343997914a7ed2d63effd424e452bb8195f5c74a45", size = 18229 },
 ]
 
 [[package]]

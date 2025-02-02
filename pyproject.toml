@@ -16,6 +16,7 @@ dependencies = [
     "pandas>=2.2.3",
     "pillow>=11.1.0",
     "pyarrow>=19.0.0",
+    "pytexturepacker>=1.2.1",
     "rasterfairy",
     "timm>=1.0.14",
     "typer>=0.15.1",
