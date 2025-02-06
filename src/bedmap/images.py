@@ -136,7 +136,7 @@ def create_atlases_and_thumbs(imageEngine, plot_id, use_cache: bool = False):
             atlas.save(atlas_dir / f"atlas-{n_atlases}.jpg")
             n_atlases += 1
             x, y = 0, 0  # start a new atlas
-        if x == 0 and y == 0:
+        if x == 0 and y == 0:  # this if statement should be true the first time
             atlas = Image.new(mode="RGB", size=atlas_size)
         atlas.paste(cell, (x, y))
 
