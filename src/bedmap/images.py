@@ -90,62 +90,75 @@ def autocontrast(img: Image) -> Image:
 
 
 # %% ../../nbs/03_images.ipynb 14
-def create_atlases_and_thumbs(imageEngine, plot_id, use_cache: bool = False):
-    """create folder with atlases in data dir"""
+def create_atlases_and_thumbs(image_engine, plot_id: str, use_cache: bool = False):
+    """Creates atlases and thumbnails from images in image_engine and saves them in designated directories."""
 
     print(timestamp(), "Copying images to output directory")
 
-    # create directories
-    atlas_dir = Path(imageEngine.out_dir) / "atlases" / str(plot_id)
-    atlas_dir.mkdir(exist_ok=True, parents=True)
+    # Define output directories
+    output_dir = Path(image_engine.out_dir)
+    atlas_dir = output_dir / "atlases" / str(plot_id)
+    thumbs_dir = output_dir / "thumbs"
+    originals_dir = output_dir / "originals"
 
-    thumbs_dir = Path(imageEngine.out_dir) / "thumbs"
+    # Ensure directories exist
+    atlas_dir.mkdir(parents=True, exist_ok=True)
     thumbs_dir.mkdir(exist_ok=True)
+    originals_dir.mkdir(exist_ok=True)
 
-    orig_dir = Path(imageEngine.out_dir) / "originals"
-    orig_dir.mkdir(exist_ok=True)
-
-    # initialize some atlas values
-    n_atlases, x, y = 0, 0, 0
+    # Initialize atlas parameters
+    atlas_size = (image_engine.atlas_size, image_engine.atlas_size)
+    current_atlas = None
+    current_x, current_y = 0, 0
+    atlas_index = 0
     positions = []
-    atlas_size = (imageEngine.atlas_size, imageEngine.atlas_size)
 
-    for img in tqdm(imageEngine, total=imageEngine.count):
-        # copy thumbnail
-        thumb = resize_to_max_side(img.original, n=imageEngine.lod_cell_height)
-        thumb = autocontrast(thumb)
-        thumb_w, thumb_h = thumb.width, thumb.height
-        thumb.save(thumbs_dir / img.unique_name)
+    for img in tqdm(image_engine, total=image_engine.count):
+        # Process thumbnail
+        thumbnail = resize_to_max_side(img.original, n=image_engine.lod_cell_height)
+        thumbnail = autocontrast(thumbnail)
+        thumb_width, thumb_height = thumbnail.width, thumbnail.height
+        thumbnail.save(thumbs_dir / img.unique_name)
 
-        # copy resized original
-        fullsize_path = orig_dir / img.unique_name
-        if use_cache and fullsize_path.exists():
-            pass
-        else:
-            fullsize = resize_to_height(img.original, height=600)
-            fullsize.save(orig_dir / img.unique_name)
+        # Process full-size image
+        fullsize_path = originals_dir / img.unique_name
+        if not (use_cache and fullsize_path.exists()):
+            fullsize_image = resize_to_height(img.original, height=600)
+            fullsize_image.save(fullsize_path)
 
-        # create atlas
-        cell = resize_to_height(img.original, height=imageEngine.cell_size)
-        cell = autocontrast(cell)
+        # Resize image for atlas
+        cell_image = resize_to_height(img.original, height=image_engine.cell_size)
+        cell_image = autocontrast(cell_image)
 
-        if (x + cell.width) > atlas_size[0]:  # end of a row
-            y += cell.height
-            x = 0
-        if (y + cell.height) > atlas_size[0]:  # end of first column
-            atlas.save(atlas_dir / f"atlas-{n_atlases}.jpg")
-            n_atlases += 1
-            x, y = 0, 0  # start a new atlas
-        if x == 0 and y == 0:  # this if statement should be true the first time
-            atlas = Image.new(mode="RGB", size=atlas_size)
-        atlas.paste(cell, (x, y))
+        # Check if we need to start a new row in the atlas
+        if current_x + cell_image.width > atlas_size[0]:
+            current_y += cell_image.height
+            current_x = 0
 
-        # store in dict
-        positions.append({"idx": n_atlases, "x": x, "y": y, "w": thumb_w, "h": thumb_h})
-        x += cell.width
+        # Check if we need to start a new atlas
+        if current_y + cell_image.height > atlas_size[1]:
+            current_atlas.save(atlas_dir / f"atlas-{atlas_index}.jpg")
+            atlas_index += 1
+            current_x, current_y = 0, 0
+            current_atlas = None
 
-    if not (x == 0 and y == 0):  # if last atlas wasn't already written
-        atlas.save(atlas_dir / f"atlas-{n_atlases}.jpg")
+        # Create a new atlas if necessary
+        if current_atlas is None:
+            current_atlas = Image.new(mode="RGB", size=atlas_size)
+
+        # Paste the image into the atlas
+        current_atlas.paste(cell_image, (current_x, current_y))
+
+        # Store image position metadata
+        positions.append({"idx": atlas_index, "x": current_x, "y": current_y, "w": thumb_width, "h": thumb_height})
+
+        # Update position for next image
+        current_x += cell_image.width
+
+    # Save the last atlas if it contains images
+    if current_atlas:
+        current_atlas.save(atlas_dir / f"atlas-{atlas_index}.jpg")
+
     return atlas_dir.as_posix(), positions
 
 

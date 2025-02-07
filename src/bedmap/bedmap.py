@@ -91,7 +91,7 @@ NB: Keras Image class objects return image.size as w,h
 
 
 # %% ../../nbs/00_bedmap.ipynb 12
-def _project_images(imageEngine, embeds: np.ndarray | None = None, **kwargs):
+def _project_images(image_engine, embeds: np.ndarray | None = None, **kwargs):
     """
     Main method for embedding user images, projecting to 2D, and creating visualization
     It would be nice to list out the image processing steps before getting started
@@ -106,19 +106,19 @@ def _project_images(imageEngine, embeds: np.ndarray | None = None, **kwargs):
 
     np.random.seed(kwargs["seed"])
     kwargs["out_dir"] = os.path.join(kwargs["out_dir"], "data")
-    write_metadata(imageEngine, kwargs["gzip"], kwargs["encoding"])
+    write_metadata(image_engine, kwargs["gzip"], kwargs["encoding"])
 
-    kwargs["atlas_dir"], atlas_data = create_atlases_and_thumbs(imageEngine, kwargs["plot_id"], kwargs["use_cache"])
+    kwargs["atlas_dir"], atlas_data = create_atlases_and_thumbs(image_engine, kwargs["plot_id"], kwargs["use_cache"])
 
     if embeds is None:
         kwargs["vecs"], _ = get_timm_embeds(
-            imageEngine, model_name=kwargs["embed_model"], data_dir=Path(kwargs["out_dir"]), **kwargs
+            image_engine, model_name=kwargs["embed_model"], data_dir=Path(kwargs["out_dir"]), **kwargs
         )
     else:
         kwargs["vecs"] = embeds
 
-    get_manifest(imageEngine, atlas_data, **kwargs)
-    # write_images(imageEngine)
+    get_manifest(image_engine, atlas_data, **kwargs)
+    # write_images(image_engine)
     print(timestamp(), "Done!")
 
 
@@ -273,13 +273,13 @@ def project_images(
         embeds = np.array([np.load(e) for e in tqdm(table.embed_path)])
 
     data_dir = os.path.join(config["out_dir"], "data")
-    imageEngine = ImageFactory(config["images"], data_dir, config["meta_dir"], options)
+    image_engine = ImageFactory(config["images"], data_dir, config["meta_dir"], options)
 
     # grab metadata from table if provided
     if table is not None:
-        imageEngine.meta_headers, imageEngine.metadata = table_to_meta(table)
+        image_engine.meta_headers, image_engine.metadata = table_to_meta(table)
 
-    _project_images(imageEngine, embeds, **config)
+    _project_images(image_engine, embeds, **config)
 
 
 # %% ../../nbs/00_bedmap.ipynb 19
@@ -299,15 +299,15 @@ def embed_images(
     # using Path.cwd() to handle ../ names -- not sure if this is superstitious
     data_dir = Path.cwd() / Path(out_dir).resolve() / "data"
 
-    imageEngine = ImageFactory(img_path=images, out_dir=data_dir, meta_dir=metadata)
-    _, embed_paths = get_timm_embeds(imageEngine, model_name=embed_model, data_dir=data_dir, **kwargs)
+    image_engine = ImageFactory(img_path=images, out_dir=data_dir, meta_dir=metadata)
+    _, embed_paths = get_timm_embeds(image_engine, model_name=embed_model, data_dir=data_dir, **kwargs)
 
     df_embeds = pd.DataFrame(
-        {"image_path": imageEngine.image_paths, "image_filename": imageEngine.filenames, "embed_path": embed_paths}
+        {"image_path": image_engine.image_paths, "image_filename": image_engine.filenames, "embed_path": embed_paths}
     )
 
-    if len(imageEngine.metadata) > 0:
-        df_meta = pd.DataFrame(imageEngine.metadata)
+    if len(image_engine.metadata) > 0:
+        df_meta = pd.DataFrame(image_engine.metadata)
         df_meta = df_meta.rename(columns={"filename": "image_filename"})
         # drop "image_path" column if df_meta has it
         if "image_path" in df_meta.columns:
