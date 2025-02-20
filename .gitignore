@@ -3,13 +3,14 @@ manifest.txt
 output*
 
 
+
 # force to include web folder
 !bedmap/web
 !bedmap/web/**/dist
 
 ##### END CUSTOM SECTION
 
-
+nbs/daft-try/tmp-test-images
 
 
 # Byte-compiled / optimized / DLL files
