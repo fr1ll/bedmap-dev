@@ -204,7 +204,7 @@ def compute_embeddings(model_name: str,
     """
     embedder = Embedder(model_name=model_name)
 
-    if images_df:
+    if images_df is not None:
         dataset = images_df.to_torch_iter_dataset()
     elif images_folder:
         # use vanilla torch dataloader
@@ -231,7 +231,7 @@ def compute_embeddings(model_name: str,
 
 
 # In[9]:
-USE_DAFT: bool = False
+USE_DAFT: bool = True
 
 if USE_DAFT:
     embeddings = compute_embeddings(MODEL_NAME, BATCH_SIZE, images_df=images_df)
