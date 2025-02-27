@@ -8,6 +8,7 @@ import gc
 import shutil
 from dataclasses import dataclass, field
 from pathlib import Path
+from itertools import chain
 
 import numpy as np
 import timm
@@ -91,16 +92,20 @@ dl_hf_images(dir=tmp_path, max_images=NUM_TEST_IMAGES)
 class Embedder:
     model_name: str
     device: torch.device = field(default_factory=lambda: torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+    dtype: torch.dtype = field(init=False)
     model: torch.nn.Module = field(init=False)
     transform: callable = field(init=False)
 
     def __post_init__(self):
+        self.dtype = torch.bfloat16 if self.device.type == "cuda" and torch.cuda.is_bf16_supported() else (
+            torch.float16 if self.device.type == "cuda" else torch.float32
+        )
         self.model = timm.create_model(self.model_name, pretrained=True, num_classes=0)
-        self.model.eval()
         self.model.to(self.device, memory_format=torch.channels_last)
-        self.model = torch.compile(self.model, dynamic=True)
+        self.model.eval()
+        self.model = torch.compile(self.model, dynamic=True, mode="reduce-overhead")
         # Resolve config removes unneeded fields before create_transform
-        cfg = timm.data.resolve_data_config(self.model.pretrained_cfg, model=self.model)
+        cfg = timm.data.resolve_data_config(self.model.pretrained_cfg)
         self.transform = timm.data.create_transform(**cfg)
 
     @torch.inference_mode()
@@ -109,10 +114,9 @@ class Embedder:
         Given a batch of pre-transformed images, compute pooled embeddings.
         The batch is moved to the proper device (with channels_last format) and processed in inference mode.
         """
-        batch_imgs = batch_imgs.to(self.device, non_blocking=True)
-        batch_imgs = batch_imgs.contiguous(memory_format=torch.channels_last)
+        batch_imgs.to(self.device, non_blocking=True, memory_format=torch.channels_last)
         if self.device.type == "cuda":
-            with torch.amp.autocast("cuda"):
+            with torch.amp.autocast("cuda", dtype=self.dtype):
                 return self.model(batch_imgs)
         else:
             # autocast can be comically slow for some CPU setups (PyTorch issue #118499)
@@ -132,6 +136,40 @@ class TransformImageCol:
     def __call__(self, batch_images) -> list:
         return [self.embedder.transform(Image.fromarray(im)) for im in batch_images.to_pylist()]
 
+
+class ImageListIteratorAsDict(Dataset):
+    def __init__(self, filelist: list[Path], transform: callable):
+        self.filelist = filelist
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.filelist)
+
+    def __getitem__(self, idx: int):
+        image = Image.open(self.filelist[idx]).convert("RGB")
+        if self.transform:
+            return {"image_transformed": self.transform(image)}
+        # return as dict for easy comparison vs. daft
+        else:
+            return {"image": [image]}
+
+
+def get_file_list(source: str | list[str]) -> list[Path]:
+    """
+    Given a folder path, a glob pattern, or a filelist, return a list of image file paths.
+    If source is a directory, a glob is run using the provided pattern.
+    If source is a string containing a wildcard, glob is applied.
+    Otherwise, if it's a list, it is returned directly.
+    """
+    if isinstance(source, list):
+        return [Path(s) for s in source]
+    elif Path(source).is_dir():
+        patterns = ["*.png", "*.jpg", "*.jpeg"]
+        return list(chain.from_iterable([Path(source).glob(p) for p in patterns]))
+    elif isinstance(source, str) and '*' in source:
+        return [Path(p) for p in glob.glob(source)]
+    else:
+        return [source]
 
 # In[7]:
 
@@ -155,9 +193,10 @@ images_df.show(1)
 # In[8]:
 
 
-def compute_embeddings(model_name:
-                       str, dataset: torch.utils.data.IterableDataset,
-                       batch_size: int = BATCH_SIZE) -> list[np.ndarray]:
+def compute_embeddings(model_name: str,
+                       batch_size: int = BATCH_SIZE,
+                       images_df: None | daft.DataFrame = None,
+                       images_folder: None | Path = None) -> list[np.ndarray]:
     """
     Given a model name and a filelist (list of image paths), this function computes and returns a list
     of embeddings (one per image). The function instantiates an Embedder, builds a dataset and dataloader,
@@ -165,24 +204,37 @@ def compute_embeddings(model_name:
     """
     embedder = Embedder(model_name=model_name)
 
+    if images_df:
+        dataset = images_df.to_torch_iter_dataset()
+    elif images_folder:
+        # use vanilla torch dataloader
+        image_list = get_file_list(images_folder)
+        dataset = ImageListIteratorAsDict(image_list, embedder.transform)
+
+
     dataloader = DataLoader(
         dataset,
         batch_size=batch_size,
         shuffle=False,
     )
 
+    embeddings = []
     for i, batch_images in enumerate(tqdm(dataloader, unit_scale=BATCH_SIZE)):
         emb = embedder.embed(batch_images["image_transformed"]).cpu().numpy()
 
         if i == 0:
-            embeddings = emb
             print(f"Shape of embedding for one batch: {emb.shape}")
-        else:
-            embeddings = np.concatenate((embeddings, emb), axis=0)
+        embeddings.append(emb)
+    embeddings = np.vstack(embeddings)
 
     return embeddings
 
 
 # In[9]:
-images_dataset = images_df.to_torch_iter_dataset()
-embeddings = compute_embeddings(MODEL_NAME, images_dataset, BATCH_SIZE)
+USE_DAFT: bool = False
+
+if USE_DAFT:
+    embeddings = compute_embeddings(MODEL_NAME, BATCH_SIZE, images_df=images_df)
+else:
+    # use vanilla torch dataset
+    embeddings = compute_embeddings(MODEL_NAME, BATCH_SIZE, images_folder=IMAGES_FOLDER)
