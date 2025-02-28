@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# coding: utf-8
 
 # In[1]:
 
@@ -7,18 +6,18 @@
 import gc
 import shutil
 from dataclasses import dataclass, field
-from pathlib import Path
+from glob import glob
 from itertools import chain
+from pathlib import Path
 
+import daft
 import numpy as np
 import timm
 import torch
-from tqdm import tqdm
+from datasets import load_dataset
 from PIL import Image
 from torch.utils.data import DataLoader, Dataset
-from datasets import load_dataset
-import daft
-
+from tqdm import tqdm
 
 # In[2]:
 
@@ -41,15 +40,15 @@ nice_models = [
 
 
 # with vit_base_patch14 and torch dataloader:
-# 
+#
 # num_images | batch_size | optimize | time |
 # -----------|------------|----------|------|
-# 500        |         32 | False    | 10:07 
-# 200        |         32 | False    | 04:50 
-# 2000       |         32 | False    | 41:00 
+# 500        |         32 | False    | 10:07
+# 200        |         32 | False    | 04:50
+# 2000       |         32 | False    | 41:00
 # 50         |         32 | Static   | 01:14
 # 50         |         32 | Dynamic  | 01:14
-# 500        |         32 | Static   | 09:33 
+# 500        |         32 | Static   | 09:33
 # 2000       | 32 (fixed) | Static   | 36:22
 # 2000       | 16 (fixed) | Static   | 36:32
 # 2000       |  4 (fixed) | Static   | 39:17
@@ -167,7 +166,7 @@ def get_file_list(source: str | list[str]) -> list[Path]:
         patterns = ["*.png", "*.jpg", "*.jpeg"]
         return list(chain.from_iterable([Path(source).glob(p) for p in patterns]))
     elif isinstance(source, str) and '*' in source:
-        return [Path(p) for p in glob.glob(source)]
+        return [Path(p) for p in glob(source)]
     else:
         return [source]
 
