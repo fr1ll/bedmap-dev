@@ -59,8 +59,14 @@ nice_models = [
 
 
 def dl_hf_images(dataset_name: str = "kvriza8/microscopy_images",
-                 dir: Path = None, max_images: int = 50) -> None:
+                 dir: Path = None,
+                 max_images: int = 50,
+                 overwrite: bool = True) -> None:
+
     dataset = load_dataset(dataset_name, split="train", streaming=True)
+    if overwrite:
+        shutil.rmtree(dir, ignore_errors=True)
+        dir.mkdir(parents=True, exist_ok=True)
 
     for i, img_row in enumerate(tqdm(iter(dataset), total=max_images)):
         if i >= max_images:
@@ -78,9 +84,6 @@ def dl_hf_images(dataset_name: str = "kvriza8/microscopy_images",
 
 
 tmp_path = Path(IMAGES_FOLDER)
-shutil.rmtree(tmp_path, ignore_errors=True)
-tmp_path.mkdir(parents=True, exist_ok=True)
-
 dl_hf_images(dir=tmp_path, max_images=NUM_TEST_IMAGES)
 
 
