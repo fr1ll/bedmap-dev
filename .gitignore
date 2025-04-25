@@ -1,16 +1,16 @@
 ##### BEGIN CUSTOM SECTION
 manifest.txt
 output*
-
-
+**/memray-results/
+nbs-daft-testing/memray-results/
 
 # force to include web folder
 !bedmap/web
 !bedmap/web/**/dist
 
-##### END CUSTOM SECTION
-
 nbs/daft-try/tmp-test-images
+
+##### END CUSTOM SECTION
 
 
 # Byte-compiled / optimized / DLL files
