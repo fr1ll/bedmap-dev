@@ -8,7 +8,6 @@ __all__ = ['MIN_BYTES', 'pipeline', 'validate_images', 'split_on_condition', 'si
 import daft
 import numpy as np
 from typing import Callable
-import datasets
 from functools import partial
 
 # %% ../../nbs/012_validate-images.ipynb 3
