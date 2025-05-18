@@ -29,7 +29,7 @@ def _autocontrast_normed(img_arr: np.array) -> np.array:
 @daft.udf(return_dtype=daft.DataType.image(mode="RGB"))
 def _autocontrast_img(arrs: daft.Series) -> np.array:
     """apply autocontrast to an image column"""
-    return [Image.fromarray(_autocontrast_normed(img), mode="RGB") for img in arrs.to_pylist()]
+    return [_autocontrast_normed(img) for img in arrs.to_pylist()]
 
 # %% ../../nbs/013_create-thumbnails.ipynb 6
 def create_autocontrast_col(df: daft.DataFrame, image_col: str="img") -> daft.DataFrame:
