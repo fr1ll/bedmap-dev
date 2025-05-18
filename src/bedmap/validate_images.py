@@ -63,7 +63,7 @@ def img_name_distinct(df: daft.DataFrame, name_col: str = "img_name") -> daft.Da
 # %% ../../nbs/012_validate-images.ipynb 10
 def do_validations(df: daft.DataFrame, validations: list[Callable]
                     ) -> tuple[daft.DataFrame, daft.DataFrame]:
-    # Process the pipeline
+    """process checks pipeline"""
     for validation in validations:
         print(f"Checking {validation.__qualname__}")
         df, dropped = split_on_condition(df, validation)

@@ -11,7 +11,8 @@ import daft
 from humanize import naturalsize
 from tqdm import tqdm
 
-from . import validate_images
+from .validate_images import validate_images
+from .create_thumbnails import create_autocontrast_col #tbr w create_thumbnails
 
 # %% ../../nbs/011_prepare-images.ipynb 4
 def _image_glob_pattern(directory: str | Path) -> str:
