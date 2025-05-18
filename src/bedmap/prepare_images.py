@@ -11,6 +11,8 @@ import daft
 from humanize import naturalsize
 from tqdm import tqdm
 
+from . import validate_images
+
 # %% ../../nbs/011_prepare-images.ipynb 4
 def _image_glob_pattern(directory: str | Path) -> str:
     """Convert a directory path into a glob pattern that matches common image formats.

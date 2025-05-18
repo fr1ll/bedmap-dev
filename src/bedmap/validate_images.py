@@ -50,7 +50,7 @@ def array_not_oblong(arrs: daft.Series, max_oblongness: float = 4.0) -> bool:
 def img_not_oblong(df: daft.DataFrame) -> daft.DataFrame:
     """Keeps images with an aspect ratio between 1:4 and 4:1 using Daft's `image_decode`."""
     # checkable = decoded.with_column("is_not_oblong", df["img"].apply(array_not_oblong, daft.DataType.bool()))
-    checkable = df.with_column("is_not_oblong", array_not_oblong(df_img["img"]))
+    checkable = df.with_column("is_not_oblong", array_not_oblong(df["img"]))
     checked = checkable.filter(checkable["is_not_oblong"]).exclude("is_not_oblong")  # Drop transient column
     return checked
 
