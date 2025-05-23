@@ -17,6 +17,8 @@ from .validate_images import validate_images
 from .create_thumbnails import create_thumbnails
 from .embed_images import embed_images
 
+from fastcore.test import test_eq
+
 # %% ../../nbs/011_prepare-images.ipynb 4
 # easy timestamps
 

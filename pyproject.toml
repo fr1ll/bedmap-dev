@@ -25,6 +25,7 @@ dependencies = [
     "pandas>=2.2.3",
     "pillow>=11.1.0",
     "pyarrow>=19.0.0",
+    "pydantic>=2.11.4",
     "pympler>=1.1",
     "pytexturepacker>=1.2.1",
     "rasterfairy",
