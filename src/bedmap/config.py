@@ -9,14 +9,16 @@ from typing import Optional
 from pydantic import Field, BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict, CliApp
 
+# %% ../../nbs/001_config.ipynb 2
 class UmapConfig(BaseModel):
     umap_n_components: int = Field(10, description="Number of components in UMAP")
     umap_n_neighbors: int = Field(15, description="Number of neighbors in UMAP")
     umap_min_dist: float = Field(0.1, description="Minimum distance in UMAP")
 
+
 class ImageConfig(BaseSettings):
-    image_dir: str = Field(None, description="Directory for input images")
-    image_glob: str = Field(None, description="glob pattern for input images")
+    image_dir: None | str = Field(None, description="Directory for input images")
+    image_glob: None | str = Field(None, description="glob pattern for input images")
     thumbnail_size: int = Field(128, description="Size of images in main bedmap view")
     model_name: str = Field("timm/vit_small_patch14_reg4_dinov2.lvd142m",
                             description="Full path to a Huggingface model")
@@ -29,8 +31,10 @@ class ImageConfig(BaseSettings):
         use_attribute_docstrings = True,
         cli_prog_name = "bedmap",
         cli_hide_none_type = True,
+        cli_ignore_unknown_args=True
         # pyproject_toml_table_header
     )
 
-# %% ../../nbs/001_config.ipynb 2
+# %% ../../nbs/001_config.ipynb 3
 print(ImageConfig().model_dump())
+
