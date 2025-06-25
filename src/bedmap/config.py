@@ -21,7 +21,7 @@ class ImageConfig(BaseSettings):
     image_glob: None | str = Field(None, description="glob pattern for input images")
     thumbnail_size: int = Field(128, description="Size of images in main bedmap view")
     model_name: str = Field("timm/vit_small_patch14_reg4_dinov2.lvd142m",
-                            description="Full path to a Huggingface model")
+                            description="Model name on huggingface.co/models")
     
     umap_config: UmapConfig = UmapConfig()
 

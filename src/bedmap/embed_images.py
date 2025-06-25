@@ -16,7 +16,7 @@ from transformers import pipeline
 def images_from_paths(pathlist):
     return (Image.open(p.as_posix()).convert("RGB").copy() for p in pathlist)
 
-# %% ../../nbs/014_embed-images.ipynb 4
+# %% ../../nbs/014_embed-images.ipynb 5
 def embed_images(imagepaths : list[Path],
                  model_name : str = "timm/vit_small_patch14_reg4_dinov2.lvd142m",
                  batch_size : int = 4
