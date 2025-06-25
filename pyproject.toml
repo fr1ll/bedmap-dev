@@ -31,10 +31,10 @@ dependencies = [
     "pytexturepacker>=1.2.1",
     "rasterfairy",
     "scalene>=1.5.51",
-    "timm>=1.0.14",
+    "timm",
     "torch",
     "torchvision",
-    "transformers>=4.50.3,<4.52.1",
+    "transformers",
     "typer>=0.15.1",
     "umap-learn<=0.5.3",
 ]
