@@ -104,3 +104,17 @@ def dl_hf_images(dataset_name: str = "kvriza8/microscopy_images",
     print(f"Size of images on disk: {naturalsize(sum([p.stat().st_size for p in image_paths]))}")
 
     return None
+
+# %% ../../nbs/011_prepare-images.ipynb 18
+def _embed_images_for_df(df: daft.DataFrame) -> daft.DataFrame:
+    """
+    Embed images for a given dataframe.
+    """
+    ## Surely there's a cleaner way to get the paths out
+
+    paths = [Path(i["img_path"].lstrip("file:/")) for i in df.select("img_path").to_pylist()]
+    embeds = embed_images(paths, model_name=MODEL_NAME, batch_size=BATCH_SIZE)
+    embeds_type = daft.DataType.embedding(daft.DataType.float32(), embeds.shape[-1])
+    embeds_series = daft.Series.from_numpy(embeds).cast(embeds_type)
+
+    return images_df.with_column("embeds", daft.lit(embeds_series))
