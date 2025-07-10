@@ -7,6 +7,9 @@ bedmap
 from nbdev import *
 ```
 
+    /home/willsa/git/bedmap-dev/.venv/lib/python3.12/site-packages/nbdev/doclinks.py:20: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+      import pkg_resources,importlib
+
 ``` python
 from nbdev.config import get_config
 ```
