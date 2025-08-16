@@ -48,6 +48,7 @@ homepage = "https://github.com/fr1ll/bedmap-dev"
 bedmap = "bedmap.bedmap:app"
 
 [tool.uv]
+package = true
 dev-dependencies = [
     "bedmap",
     "coverage>=7.6.1",
@@ -62,7 +63,6 @@ dev-dependencies = [
     "setuptools>=75.2.0",
     # Needed by `nbdev`, but undeclared
 ]
-package = true
 
 [tool.uv.sources]
 bedmap = { workspace = true }
