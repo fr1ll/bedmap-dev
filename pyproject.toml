@@ -47,13 +47,6 @@ homepage = "https://github.com/fr1ll/bedmap-dev"
 [project.scripts]
 bedmap = "bedmap.bedmap:app"
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/bedmap"]
-
 [tool.uv]
 dev-dependencies = [
     "bedmap",
@@ -69,6 +62,7 @@ dev-dependencies = [
     "setuptools>=75.2.0",
     # Needed by `nbdev`, but undeclared
 ]
+package = true
 
 [tool.uv.sources]
 bedmap = { workspace = true }
