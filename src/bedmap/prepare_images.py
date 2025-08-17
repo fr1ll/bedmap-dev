@@ -15,8 +15,8 @@ from loguru import logger
 
 from .validate_images import validate_images
 from .create_thumbnails import create_thumbnails
-from .embed_images import embed_images
-from .config import ImageConfig
+from .embed_images import embed_images_for_df
+from .config import Cfg
 
 from fastcore.test import test_eq
 
@@ -27,7 +27,7 @@ logger.remove()
 logger.add(sys.stdout, level="INFO")
 
 # %% ../../nbs/011_prepare-images.ipynb 6
-cfg = ImageConfig()
+cfg = Cfg()
 
 BATCH_SIZE = 4
 
@@ -104,21 +104,7 @@ def dl_hf_images(dataset_name: str = "kvriza8/microscopy_images",
 
     return None
 
-# %% ../../nbs/011_prepare-images.ipynb 14
-def _embed_images_for_df(df: daft.DataFrame, model_name: str, batch_size: int) -> daft.DataFrame:
-    """
-    Embed images for a given dataframe.
-    """
-    ## Surely there's a cleaner way to get the paths out
-
-    paths = [Path(i["img_path"].lstrip("file:/")) for i in df.select("img_path").to_pylist()]
-    embeds = embed_images(paths, model_name=model_name, batch_size=batch_size)
-    embeds_type = daft.DataType.embedding(daft.DataType.float32(), embeds.shape[-1])
-    embeds_series = daft.Series.from_numpy(embeds).cast(embeds_type)
-
-    return images_df.with_column("embeds", daft.lit(embeds_series))
-
-# %% ../../nbs/011_prepare-images.ipynb 16
+# %% ../../nbs/011_prepare-images.ipynb 15
 def prepare_embeddings(pattern: str | Path, thumbnail_height: int,
                         model_name: str, batch_size: int) -> daft.DataFrame:
     """
@@ -133,5 +119,5 @@ def prepare_embeddings(pattern: str | Path, thumbnail_height: int,
     df = _df_images_from_pattern(pattern)
     df, _ = validate_images(df)
     df = create_thumbnails(df, height=thumbnail_height)
-    df = _embed_images_for_df(df, model_name=model_name, batch_size=batch_size)
+    df = embed_images_for_df(df, model_name=model_name, batch_size=batch_size)
     return df
