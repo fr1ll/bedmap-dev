@@ -20,3 +20,4 @@ update viewer does same as above, but skips create thumbnails
 create web assets includes:
 - copy thumbnails
 - create json data: layouts, name, icon, filepaths
+
