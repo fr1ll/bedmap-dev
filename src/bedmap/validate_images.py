@@ -9,7 +9,7 @@ import daft
 import numpy as np
 from typing import Callable
 from functools import partial
-# from bedmap.pipeline import step
+from .pipeline import step
 
 # %% ../../nbs/012_validate-images.ipynb 3
 MIN_BYTES = 500
@@ -34,6 +34,7 @@ def split_on_condition(df: daft.DataFrame, condition: Callable[[daft.DataFrame],
 
 # %% ../../nbs/012_validate-images.ipynb 5
 # Define filtering functions
+@step(requires=["size"])
 def size_nontrivial(df: daft.DataFrame) -> daft.DataFrame:
     """Keeps images that are at least MIN_BYTES in size on disk."""
     return df.filter(df["size"] > MIN_BYTES)
@@ -48,6 +49,7 @@ def array_not_oblong(arrs: daft.Series, max_oblongness: float = 4.0) -> bool:
     return max_aspects < max_oblongness
 
 # %% ../../nbs/012_validate-images.ipynb 7
+@step(requires=["img"])
 def img_not_oblong(df: daft.DataFrame) -> daft.DataFrame:
     """Keeps images with an aspect ratio between 1:4 and 4:1 using Daft's `image_decode`."""
     # checkable = decoded.with_column("is_not_oblong", df["img"].apply(array_not_oblong, daft.DataType.bool()))
@@ -56,15 +58,17 @@ def img_not_oblong(df: daft.DataFrame) -> daft.DataFrame:
     return checked
 
 # %% ../../nbs/012_validate-images.ipynb 8
-def img_name_distinct(df: daft.DataFrame, name_col: str = "img_name") -> daft.DataFrame:
+@step(requires=["img_name"])
+def img_name_distinct(df: daft.DataFrame) -> daft.DataFrame:
     """Keeps images with unique filenames."""
+    name_col="img_name"
     aggs = [daft.col(c).any_value() for c in set(df.column_names) - {name_col}]
     return df.groupby(name_col).agg(*aggs)
 
 # %% ../../nbs/012_validate-images.ipynb 10
 def do_validations(df: daft.DataFrame, validations: list[Callable]
                     ) -> tuple[daft.DataFrame, daft.DataFrame]:
-    """process checks pipeline"""
+    """run the validation pipeline"""
     for validation in validations:
         print(f"Checking {validation.__qualname__}")
         df, dropped = split_on_condition(df, validation)

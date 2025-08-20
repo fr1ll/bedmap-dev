@@ -20,7 +20,7 @@ def step(requires: Iterable[str] = (), provides: Iterable[str] = ()):
         fn.provides = provs
         @wraps(fn)
         def wrapper(df, *args, **kwargs):
-            missing = fn.requires - set(df.columns)
+            missing = fn.requires - set(df.column_names)
             if missing:
                 raise ValueError(f"{fn.__name__} missing columns: {missing}")
             out = fn(df, *args, **kwargs)
