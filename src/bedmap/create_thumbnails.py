@@ -7,6 +7,7 @@ __all__ = ['create_thumbnails']
 import numpy as np
 import daft
 from PIL import Image
+from .pipeline import step
 
 # %% ../../nbs/013_create-thumbnails.ipynb 4
 def _autocontrast_normed(img_arr: np.array) -> np.array:
@@ -67,8 +68,10 @@ def _resize_to_max_height(arrs: daft.Series, height: int = 128) -> np.array:
     return [np.array(Image.fromarray(a).resize(s)) for (a, s) in zip(arrs, thumb_shapes)]
 
 # %% ../../nbs/013_create-thumbnails.ipynb 13
-def create_thumbnails(df: daft.DataFrame, image_col: str="img", height=128) -> daft.DataFrame:
+@step(requires=["img"], provides=["thumb"])
+def create_thumbnails(df: daft.DataFrame, height=128) -> daft.DataFrame:
     """create thumbnail column"""
+    image_col="img"
     df = df.with_column("img_ac", _autocontrast_img(df[image_col]))
     df = df.with_column("thumb", _resize_to_max_height(df["img_ac"], height))
     return df.exclude("img_ac")
