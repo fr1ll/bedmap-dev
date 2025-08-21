@@ -9,7 +9,7 @@ import daft
 import numpy as np
 from typing import Callable
 from functools import partial
-from .pipeline import step
+from .step import step
 
 # %% ../../nbs/012_validate-images.ipynb 3
 MIN_BYTES = 500
@@ -66,7 +66,7 @@ def img_name_distinct(df: daft.DataFrame) -> daft.DataFrame:
     return df.groupby(name_col).agg(*aggs)
 
 # %% ../../nbs/012_validate-images.ipynb 10
-def do_validations(df: daft.DataFrame, validations: list[Callable]
+def do_validations(df: daft.DataFrame, validations: list[Callable] 
                     ) -> tuple[daft.DataFrame, daft.DataFrame]:
     """run the validation pipeline"""
     for validation in validations:
@@ -77,7 +77,7 @@ def do_validations(df: daft.DataFrame, validations: list[Callable]
             print(f"{dropped.count_rows()} images failed check for {validation.__name__} and will be dropped.")
             print(dropped.head(1))  # Print first dropped row as an example
 
-    return df, dropped
+    return df
 
 
 # %% ../../nbs/012_validate-images.ipynb 11

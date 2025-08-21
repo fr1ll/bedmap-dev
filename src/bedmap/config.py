@@ -39,5 +39,5 @@ class Cfg(BaseSettings):
     )
 
 # %% ../../nbs/001_config.ipynb 3
-print(Cfg().model_dump())
+# print(Cfg().model_dump())
 
