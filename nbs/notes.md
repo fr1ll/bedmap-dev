@@ -1,3 +1,5 @@
+## Use cases
+
 Ways you might run bedmap:
 1. end-to-end
 2. embed images first, then create viewer
@@ -20,4 +22,9 @@ update viewer does same as above, but skips create thumbnails
 create web assets includes:
 - copy thumbnails
 - create json data: layouts, name, icon, filepaths
+
+## Development planning
+
+- I should look into [daft's @daft.func](https://docs.daft.ai/en/stable/quickstart/#transform-columns-with-custom-logic) to understand how I should be writing functions for daft
+- I should write a single end-to-end pipeline, then consider more complex / lazy ways to define pipelines later only as needed
 

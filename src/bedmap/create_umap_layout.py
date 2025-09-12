@@ -7,6 +7,7 @@ __all__ = ['umap_2d', 'create_umap_col']
 import numpy as np
 import umap
 import daft
+from .step import step
 
 # %% ../../nbs/021_create-umap-layout.ipynb 3
 def umap_2d(embeddings: np.ndarray, n_neighbors: int = 15, min_dist: float = 0.1,
@@ -24,6 +25,7 @@ def umap_2d(embeddings: np.ndarray, n_neighbors: int = 15, min_dist: float = 0.1
                      metric=metric, random_state=random_state).fit_transform(embeddings)
 
 # %% ../../nbs/021_create-umap-layout.ipynb 5
+@step(requires=["embeddings"], provides=["umap_xys"])
 def create_umap_col(df: daft.DataFrame, n_neighbors: int = 15, min_dist: float = 0.1,
                 metric: str = "cosine", random_state: int = 42,
                 col_namespace="umap") -> daft.DataFrame:
