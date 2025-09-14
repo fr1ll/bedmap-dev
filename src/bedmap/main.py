@@ -3,33 +3,39 @@
 # %% auto 0
 __all__ = ['process_images_to_umap', 'run_recipe']
 
-# %% ../../nbs/051_main.ipynb 1
+# %% ../../nbs/051_main.ipynb 2
 from functools import partial
+from pathlib import Path
+import shutil
 
 from .prepare_images import df_images_from_pattern
 from .validate_images import validate_images
 from .create_thumbnails import create_thumbnails_col
 from .embed_images import create_embeddings_col
 from .create_umap_layout import create_umap_col
+from .scaffold_output import copy_web_assets
+from .config import Cfg
 
-# %% ../../nbs/051_main.ipynb 3
+# %% ../../nbs/051_main.ipynb 4
 def process_images_to_umap(cfg):
     steps = [validate_images,
-        partial(create_thumbnails_col, thumb_size=cfg.thumb_opts.size),
+        partial(create_thumbnails_col, height=cfg.thumbnail_size),
     ]
-    if cfg.embed_opts is not None:
-        steps.append(partial(create_embeddings_col, embed_model=cfg.embed_opts.model))
-    if isinstance(cfg.umap_specs, list):
-        for spec in cfg.umap_specs:
-            steps.append(partial(create_umap_col, umap_specs=spec))
-    elif cfg.umap_specs:
-        steps.append(partial(create_umap_col, umap_specs=cfg.umap_specs))
+    if cfg.model_name is not None:
+        steps.append(partial(create_embeddings_col, model_name=cfg.model_name,
+        batch_size=2))
+    if isinstance(cfg.umap_spec, list):
+        for spec in cfg.umap_spec:
+            steps.append(partial(create_umap_col, **cfg.umap_spec.model_dump()))
+    elif cfg.umap_spec:
+        steps.append(partial(create_umap_col, **cfg.umap_spec.model_dump()))
 
     return steps
 
-# %% ../../nbs/051_main.ipynb 4
+# %% ../../nbs/051_main.ipynb 5
 def run_recipe(cfg):
-    df = df_images_from_pattern(cfg.pattern)
+    df = df_images_from_pattern(cfg.paths.image_glob)
     for fn in process_images_to_umap(cfg):
         df = fn(df)
+    copy_web_assets(cfg.paths.output_dir)
     return df

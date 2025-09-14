@@ -43,17 +43,25 @@ def embed_images(imagepaths : list[Path],
 
     return np.array(embeddings)
 
-# %% ../../nbs/014_embed-images.ipynb 6
+# %% ../../nbs/014_embed-images.ipynb 7
 @step(requires=["img_path"], provides=["embeddings"])
 def create_embeddings_col(df: daft.DataFrame, model_name: str, batch_size: int) -> daft.DataFrame:
     """
     Embed images for a given dataframe.
     """
-    ## Surely there's a cleaner way to get the paths out
-
-    paths = [Path(i["img_path"].lstrip("file:/")) for i in df.select("img_path").to_pylist()]
+    ## daft encodes paths as URIs, always starting with file://
+    df = df.with_column("img_path_nouri", df["img_path"].str.replace(
+        pattern="^file://", replacement="", regex=True))
+    paths = [Path(r["img_path_nouri"]) for r in df.select("img_path_nouri").to_pylist()]
     embeds = embed_images(paths, model_name=model_name, batch_size=batch_size)
-    embeds_type = daft.DataType.embedding(daft.DataType.float32(), embeds.shape[-1])
+    # fixed_size_list lets us use normal arrow methods to calculate length later
+    embeds_type = daft.DataType.fixed_size_list(daft.DataType.float32(), embeds.shape[-1])
     embeds_series = daft.Series.from_numpy(embeds).cast(embeds_type)
 
-    return df.with_column("embeddings", daft.lit(embeds_series))
+    df_embs = daft.from_pydict({"embeddings": embeds_series,
+    "img_path_nouri":  df.select("img_path_nouri").to_arrow()["img_path_nouri"]}
+    )
+
+    df = df.join(df_embs, on="img_path_nouri")
+
+    return df.exclude("img_path_nouri")

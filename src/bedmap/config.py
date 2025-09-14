@@ -8,7 +8,12 @@ from typing import Optional
 from pathlib import Path
 
 from pydantic import Field, BaseModel
-from pydantic_settings import BaseSettings, SettingsConfigDict, CliApp
+from pydantic_settings import (
+    BaseSettings,
+    SettingsConfigDict,
+    TomlConfigSettingsSource,
+    CliApp,
+)
 
 # %% ../../nbs/001_config.ipynb 2
 class Paths(BaseModel):
@@ -19,12 +24,10 @@ class Paths(BaseModel):
             description="Directory for output files")
 
 
-
 class UmapSpec(BaseModel):
-    umap_n_components: int = Field(10, description="Number of components in UMAP")
-    umap_n_neighbors: int = Field(15, description="Number of neighbors in UMAP")
-    umap_min_dist: float = Field(0.1, description="Minimum distance in UMAP")
-
+    n_neighbors: int = Field(15, description="Number of neighbors in UMAP")
+    min_dist: float = Field(0.1, description="Minimum distance in UMAP")
+    
 
 class Cfg(BaseSettings):
     thumbnail_size: int = Field(128, description="Size of images in main bedmap view")
@@ -40,10 +43,6 @@ class Cfg(BaseSettings):
         use_attribute_docstrings = True,
         cli_prog_name = "bedmap",
         cli_hide_none_type = True,
-        cli_ignore_unknown_args=True
-        # pyproject_toml_table_header
+        cli_ignore_unknown_args=True,
+        pyproject_toml_table_header=(),
     )
-
-# %% ../../nbs/001_config.ipynb 3
-# print(Cfg().model_dump())
-

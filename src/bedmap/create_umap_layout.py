@@ -31,20 +31,13 @@ def create_umap_col(df: daft.DataFrame, n_neighbors: int = 15, min_dist: float =
                 col_namespace="umap") -> daft.DataFrame:
     """
     Create a UMAP layout from embeddings.
-
-    Args:
-        embeddings: np.ndarray, shape (n_samples, n_features)
-        n_neighbors: int, default=15
-        min_dist: float, default=0.1
-        n_components: int, default=2
     """
-
+    print("Creating umap layout")
     ## TODO: use namespacing for XYs column
-    # embeds = np.asarray(df.select("embeddings").to_pylist()["embeddings"])
     embeds = df.select("embeddings").to_arrow()["embeddings"]
     shape = len(embeds), embeds.type.list_size
-    embeds = embeds.values.to_numpy().reshape(shape)
+    embeds = np.stack(embeds.combine_chunks().to_numpy(zero_copy_only=False), 0)
     umap_xys = umap_2d(embeds, n_neighbors=n_neighbors, min_dist=min_dist,
                        metric=metric, random_state=random_state)
     umap_xys = daft.Series.from_numpy(umap_xys)
-    return df.with_column(f"{col_namespace}_xys", umap_xys)
+    return df.with_column(f"{col_namespace}_xys", daft.lit(umap_xys))

@@ -257,3 +257,6 @@ _deptry = "uv run deptry ."
         "_pytest"
     ]
 
+[tool.pydantic-settings.paths]
+output_dir = "../tests/output_00"
+image_glob = "../tests/smithsonian_butterflies_10/jpgs/*.jpg"
