@@ -26,5 +26,6 @@ create web assets includes:
 ## Development planning
 
 - I should look into [daft's @daft.func](https://docs.daft.ai/en/stable/quickstart/#transform-columns-with-custom-logic) to understand how I should be writing functions for daft
+    - possibly can rewrite the embedding function as @daft.func - maybe won't have same memory issues as before?
 - I should write a single end-to-end pipeline, then consider more complex / lazy ways to define pipelines later only as needed
 

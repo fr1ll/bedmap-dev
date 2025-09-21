@@ -6,14 +6,18 @@ __all__ = ['Paths', 'UmapSpec', 'Cfg']
 # %% ../../nbs/001_config.ipynb 1
 from typing import Optional
 from pathlib import Path
+from importlib.metadata import version
+from uuid import uuid4
 
-from pydantic import Field, BaseModel
+from pydantic import Field, BaseModel, UUID4
 from pydantic_settings import (
     BaseSettings,
     SettingsConfigDict,
     TomlConfigSettingsSource,
     CliApp,
 )
+
+import bedmap # for version
 
 # %% ../../nbs/001_config.ipynb 2
 class Paths(BaseModel):
@@ -34,7 +38,8 @@ class Cfg(BaseSettings):
     model_name: str = Field("timm/vit_small_patch14_reg4_dinov2.lvd142m",
                             description="Model name on huggingface.co/models")
     umap_spec: UmapSpec = UmapSpec()
-    clipplot_version: str = Field("0.0.1", description="Version of clipplot")
+    clipplot_version: str = Field(version(bedmap.__name__), description="Version of clipplot")
+    plot_id: UUID4 = Field(default_factory=lambda: str(uuid4()), description="Unique identifier for plot")
     paths: Paths = Paths()
 
     model_config = SettingsConfigDict(

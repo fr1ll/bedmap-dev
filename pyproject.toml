@@ -1,6 +1,6 @@
 [project]
 name = "bedmap"
-version = "0.2.0"
+version = "0.2.1a1"
 description = "High-dimensional cartography tool"
 readme = "README.md"
 requires-python = ">=3.10"
