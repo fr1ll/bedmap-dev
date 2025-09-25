@@ -35,7 +35,7 @@ class UmapSpec(BaseModel):
 
 class Cfg(BaseSettings):
     thumbnail_size: int = Field(128, description="Size of images in main bedmap view")
-    model_name: str = Field("timm/vit_small_patch14_reg4_dinov2.lvd142m",
+    model_name: str = Field("timm/vit_small_patch16_dinov3.lvd1689m",
                             description="Model name on huggingface.co/models")
     umap_spec: UmapSpec = UmapSpec()
     clipplot_version: str = Field(version(bedmap.__name__), description="Version of clipplot")
