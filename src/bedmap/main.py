@@ -14,6 +14,7 @@ from .create_thumbnails import create_thumbnails_col
 from .embed_images import create_embeddings_col
 from .create_umap_layout import create_umap_col
 from .scaffold_output import copy_web_assets
+from .manifests import write_manifest
 from .config import Cfg
 
 # %% ../../nbs/051_main.ipynb 4
@@ -38,4 +39,5 @@ def run_recipe(cfg):
     for fn in process_images_to_umap(cfg):
         df = fn(df)
     copy_web_assets(cfg.paths.output_dir)
+    write_manifest(cfg)
     return df

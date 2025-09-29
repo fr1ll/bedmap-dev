@@ -28,4 +28,12 @@ create web assets includes:
 - I should look into [daft's @daft.func](https://docs.daft.ai/en/stable/quickstart/#transform-columns-with-custom-logic) to understand how I should be writing functions for daft
     - possibly can rewrite the embedding function as @daft.func - maybe won't have same memory issues as before?
 - I should write a single end-to-end pipeline, then consider more complex / lazy ways to define pipelines later only as needed
+- I can switch to daft's new image embedder, will reduce code: https://docs.daft.ai/en/stable/api/ai/#daft.ai.protocols.ImageEmbedder.embed_image
 
+### Next steps (2025-09-28)
+
+1. finish manifest (sizes) and imagelist
+2. create heightmap
+3. create rasterfairy layout
+4. collect layouts in config while adding them
+5. create atlas, update manifest for atlas
