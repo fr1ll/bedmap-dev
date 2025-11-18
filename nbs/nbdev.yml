@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "bedmap"
+  site-url: "https://fr1ll.github.io/bedmap"
+  description: "High-dimensional cartography tool"
+  repo-branch: main
+  repo-url: "https://github.com/fr1ll/bedmap-dev"

@@ -1,0 +1,3 @@
+
+
+embeddings = compute_embeddings(MODEL_NAME, images_dataset, BATCH_SIZE)
